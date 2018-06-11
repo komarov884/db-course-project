@@ -1,0 +1,41 @@
+Configuration:
+  status: warn
+  name: YAMLConfig
+  properties:
+    property:
+      name: filename
+      value: logs/music-store.log
+  thresholdFilter:
+    level: debug
+  appenders:
+    Console:
+      name: STDOUT
+      PatternLayout:
+        Pattern: "%m%n"
+    File:
+      name: File
+      fileName: ${filename}
+      PatternLayout:
+        Pattern: "%d %p %C{1.} [%t] %m%n"
+      Filters:
+        ThresholdFilter:
+          level: debug
+
+  Loggers:
+    logger:
+      -
+        name: com.db.courseproject
+        level: debug
+        additivity: true
+        AppenderRef:
+          ref: STDOUT
+      -
+        name: com.db.courseproject.musicstore
+        level: debug
+        additivity: true
+        AppenderRef:
+          ref: File
+    Root:
+      level: error
+      AppenderRef:
+        ref: STDOUT
