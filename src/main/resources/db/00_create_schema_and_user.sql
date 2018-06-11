@@ -1,3 +1,6 @@
+DROP SCHEMA IF EXISTS mstore CASCADE;
+DROP USER IF EXISTS mstore_user;
+
 CREATE USER mstore_user WITH PASSWORD 'mstore_pass';
 
 CREATE SCHEMA IF NOT EXISTS mstore AUTHORIZATION mstore_user;

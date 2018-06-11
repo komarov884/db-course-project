@@ -1,21 +1,21 @@
 CREATE SEQUENCE mstore.albums_id_seq
     INCREMENT BY 1
-    START WITH 1;
+    START WITH 9;
 CREATE SEQUENCE mstore.artists_id_seq
     INCREMENT BY 1
-    START WITH 1;
+    START WITH 6;
 CREATE SEQUENCE mstore.authors_id_seq
     INCREMENT BY 1
-    START WITH 1;
+    START WITH 11;
 CREATE SEQUENCE mstore.producers_id_seq
     INCREMENT BY 1
-    START WITH 1;
+    START WITH 6;
 CREATE SEQUENCE mstore.record_labels_id_seq
     INCREMENT BY 1
-    START WITH 1;
+    START WITH 6;
 CREATE SEQUENCE mstore.songs_id_seq
     INCREMENT BY 1
-    START WITH 1;
+    START WITH 94;
 
 CREATE TABLE mstore.artists(
     "id"         BIGINT DEFAULT nextval('mstore.artists_id_seq') PRIMARY KEY,
@@ -60,11 +60,11 @@ CREATE TABLE mstore.songs(
 
 CREATE TABLE mstore.album_producer(
     "album_id"    BIGINT REFERENCES mstore.albums (id) NOT NULL,
-    "producer_id" BIGINT REFERENCES mstore.poducers (id) NOT NULL,
+    "producer_id" BIGINT REFERENCES mstore.producers (id) NOT NULL,
     CONSTRAINT album_producer_pkey PRIMARY KEY (album_id, producer_id)
 );
 CREATE TABLE mstore.song_author(
     "song_id" BIGINT REFERENCES mstore.songs (id) NOT NULL,
     "author_id" BIGINT REFERENCES mstore.authors (id) NOT NULL,
-    CONSTRAINT song_author_pkey PRIMARY KEY (song_id, author_id
+    CONSTRAINT song_author_pkey PRIMARY KEY (song_id, author_id)
 );

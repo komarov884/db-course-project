@@ -1,14 +1,15 @@
 package com.db.courseproject.musicstore;
 
+import com.db.courseproject.musicstore.util.DBAdministrator;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 
 import java.net.URL;
+import java.sql.SQLException;
 
 /**
  * Music store application.
@@ -22,17 +23,15 @@ import java.net.URL;
  * @author Vasilii Komarov
  */
 public class MusicStoreApplication extends Application {
-    private static final Logger LOGGER = LogManager.getLogger(MusicStoreApplication.class);
+    private static final Logger LOGGER = Logger.getLogger(MusicStoreApplication.class);
 
     private static final String FXML_FILE = "forms/MainForm.fxml";
     private static final String CSS_FILE = "css/styles.css";
     private static final String FORM_TITLE = "Music store";
 
-    private static final String CREATE_SCHEMA_PARAM = "createSchema";
     private static final String CREATE_TABLES_PARAM = "createTables";
     private static final String INSERT_DATA_PARAM = "insertData";
     private static final String DROP_TABLES_PARAM = "dropTables";
-    private static final String DROP_SCHEMA_PARAM = "dropSchema";
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -55,13 +54,40 @@ public class MusicStoreApplication extends Application {
 
     /**
      * Application entry point.
-     * Takes one of the following program arguments:
-     * "createSchema", "createTables", "insertData", "dropTables", "dropSchema".
+     * Takes one of the following program arguments: "createTables", "insertData", "dropTables".
      *
      * @param args program arguments.
      */
     public static void main(String[] args) {
-
+        executeActionsOnDB(args);
         launch(args);
+    }
+
+    private static void executeActionsOnDB(String[] args) {
+        for (String arg : args) {
+            switch (arg) {
+                case CREATE_TABLES_PARAM:
+                    try {
+                        DBAdministrator.createTables();
+                    } catch (SQLException e) {
+                        LOGGER.warn(e.getMessage());
+                    }
+                    break;
+                case INSERT_DATA_PARAM:
+                    try {
+                        DBAdministrator.insertData();
+                    } catch (SQLException e) {
+                        LOGGER.warn(e.getMessage());
+                    }
+                    break;
+                case DROP_TABLES_PARAM:
+                    try {
+                        DBAdministrator.dropTables();
+                    } catch (SQLException e) {
+                        LOGGER.warn(e.getMessage());
+                    }
+                    break;
+            }
+        }
     }
 }
