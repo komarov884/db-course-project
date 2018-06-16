@@ -1,6 +1,7 @@
 package com.db.courseproject.musicstore.model;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.Date;
 
@@ -12,8 +13,9 @@ import java.util.Date;
  * @author Vasilii Komarov
  */
 @Data
+@Accessors(chain = true)
 public abstract class Member {
-    private long id;
+    private Long id;
     private FullName name;
     private Date birthDate;
 }

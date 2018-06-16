@@ -1,8 +1,9 @@
 package com.db.courseproject.musicstore.model;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Song entity.
@@ -12,10 +13,10 @@ import java.util.Set;
  * @author Vasilii Komarov
  */
 @Data
+@Accessors(chain = true)
 public class Song {
-    private long id;
-    private Album album;
-    private int orderNumber;
+    private Long id;
+    private Integer orderNumber;
     private String title;
-    private Set<Author> authors;
+    private List<Author> authors;
 }

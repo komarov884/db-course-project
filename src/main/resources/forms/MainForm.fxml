@@ -12,7 +12,7 @@
          <children>
             <VBox prefHeight="200.0" prefWidth="150.0">
                <children>
-                  <Button mnemonicParsing="false" prefWidth="90.0" text="Albums">
+                  <Button fx:id="btAlbums" mnemonicParsing="false" prefWidth="90.0" onAction="#btAlbumsClick" text="Albums">
                      <VBox.margin>
                         <Insets left="40.0" top="31.0" />
                      </VBox.margin></Button>

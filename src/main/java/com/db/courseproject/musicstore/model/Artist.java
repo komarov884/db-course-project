@@ -1,8 +1,7 @@
 package com.db.courseproject.musicstore.model;
 
 import lombok.Data;
-
-import java.util.Set;
+import lombok.experimental.Accessors;
 
 /**
  * Artist entity.
@@ -12,6 +11,6 @@ import java.util.Set;
  * @author Vasilii Komarov
  */
 @Data
+@Accessors(chain = true)
 public class Artist extends Member {
-    private Set<Album> albums;
 }

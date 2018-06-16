@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane maxHeight="380.0" maxWidth="260.0" minHeight="380.0" minWidth="260.0" prefHeight="380.0" prefWidth="260.0"
+            xmlns="http://javafx.com/javafx/8.0.121"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.db.courseproject.musicstore.controller.CreateUpdateAlbumController">
+   <children>
+      <VBox maxHeight="380.0" maxWidth="260.0" minHeight="380.0" minWidth="260.0" prefHeight="380.0" prefWidth="260.0">
+         <children>
+            <HBox maxWidth="250.0" minWidth="250.0" prefHeight="100.0" prefWidth="250.0">
+               <children>
+                  <Label maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Id*:" />
+                  <TextField fx:id="tfId" minWidth="150.0" prefWidth="150.0" />
+               </children>
+               <VBox.margin>
+                  <Insets left="5.0" top="5.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox maxWidth="250.0" minWidth="250.0" prefHeight="100.0" prefWidth="250.0">
+               <children>
+                  <Label maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Title*:" />
+                  <TextField fx:id="tfTitle" minWidth="150.0" prefWidth="150.0" />
+               </children>
+               <VBox.margin>
+                  <Insets left="5.0" top="5.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox maxWidth="250.0" minWidth="250.0" prefHeight="100.0" prefWidth="250.0">
+               <children>
+                  <Label maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Issue year:" />
+                  <TextField fx:id="tfIssueYear" minWidth="150.0" prefWidth="150.0" />
+               </children>
+               <VBox.margin>
+                  <Insets left="5.0" top="5.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox maxWidth="250.0" minWidth="250.0" prefHeight="100.0" prefWidth="250.0">
+               <children>
+                  <Label maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Price*:" />
+                  <TextField fx:id="tfPrice" minWidth="150.0" prefWidth="150.0" />
+               </children>
+               <VBox.margin>
+                  <Insets left="5.0" top="5.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox maxWidth="250.0" minWidth="250.0" prefHeight="100.0" prefWidth="250.0">
+               <children>
+                  <Label maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Genre:" />
+                  <TextField fx:id="tfGenre" minWidth="150.0" prefWidth="150.0" />
+               </children>
+               <VBox.margin>
+                  <Insets left="5.0" top="5.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox maxWidth="250.0" minWidth="250.0" prefHeight="100.0" prefWidth="250.0">
+               <children>
+                  <Label maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Artist id*:" />
+                  <TextField fx:id="tfArtistId" minWidth="150.0" prefWidth="150.0" />
+               </children>
+               <VBox.margin>
+                  <Insets left="5.0" top="5.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox maxWidth="250.0" minWidth="250.0" prefHeight="100.0" prefWidth="250.0">
+               <children>
+                  <Label maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Record label id:" />
+                  <TextField fx:id="tfRecordLabelId" minWidth="150.0" prefWidth="150.0" />
+               </children>
+               <VBox.margin>
+                  <Insets left="5.0" top="5.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox maxHeight="100.0" maxWidth="250.0" minHeight="100.0" minWidth="250.0" prefHeight="100.0" prefWidth="250.0">
+               <children>
+                  <Label maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Producer ids:" />
+                  <TextArea fx:id="taProducerIds" minHeight="100.0" minWidth="150.0" prefHeight="100.0" prefWidth="150.0" />
+               </children>
+               <VBox.margin>
+                  <Insets left="5.0" top="5.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox maxWidth="250.0" minWidth="250.0" prefHeight="100.0" prefWidth="250.0">
+               <children>
+                  <Button fx:id="btConfirm" mnemonicParsing="false" prefWidth="100.0" onAction="#btConfirmClick" text="Confirm" />
+                  <Button fx:id="btCancel" mnemonicParsing="false" prefWidth="100.0" onAction="#btCancelClick" text="Cancel">
+                     <HBox.margin>
+                        <Insets left="50.0" />
+                     </HBox.margin></Button>
+               </children>
+               <VBox.margin>
+                  <Insets left="5.0" top="5.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

@@ -1,6 +1,7 @@
 package com.db.courseproject.musicstore.model;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * Full name embeddable entity.
@@ -10,6 +11,7 @@ import lombok.Data;
  * @author Vasilii Komarov
  */
 @Data
+@Accessors(chain = true)
 public class FullName {
     private String firstName;
     private String lastName;

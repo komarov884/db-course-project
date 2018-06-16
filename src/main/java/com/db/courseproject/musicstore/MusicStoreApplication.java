@@ -11,6 +11,10 @@ import org.apache.log4j.Logger;
 import java.net.URL;
 import java.sql.SQLException;
 
+import static com.db.courseproject.musicstore.util.ViewConstants.CSS_FILE;
+import static com.db.courseproject.musicstore.util.ViewConstants.MAIN_FORM_FXML;
+import static com.db.courseproject.musicstore.util.ViewConstants.MAIN_FORM_TITLE;
+
 /**
  * Music store application.
  * <p>
@@ -25,28 +29,23 @@ import java.sql.SQLException;
 public class MusicStoreApplication extends Application {
     private static final Logger LOGGER = Logger.getLogger(MusicStoreApplication.class);
 
-    private static final String FXML_FILE = "forms/MainForm.fxml";
-    private static final String CSS_FILE = "css/styles.css";
-    private static final String FORM_TITLE = "Music store";
-
     private static final String CREATE_TABLES_PARAM = "createTables";
     private static final String INSERT_DATA_PARAM = "insertData";
     private static final String DROP_TABLES_PARAM = "dropTables";
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        URL fxmlFile = ClassLoader.getSystemClassLoader().getResource(FXML_FILE);
+        URL fxmlFile = ClassLoader.getSystemClassLoader().getResource(MAIN_FORM_FXML);
 
         FXMLLoader fxmlLoader = new FXMLLoader(fxmlFile);
         Pane root = fxmlLoader.load();
 
-        //Scene scene = new Scene(root, FORM_WIDTH, FORM_HEIGHT);
         Scene scene = new Scene(root);
 
         URL cssFile = ClassLoader.getSystemClassLoader().getResource(CSS_FILE);
         scene.getStylesheets().add((cssFile).toExternalForm());
 
-        primaryStage.setTitle(FORM_TITLE);
+        primaryStage.setTitle(MAIN_FORM_TITLE);
         primaryStage.setResizable(false);
         primaryStage.setScene(scene);
         primaryStage.show();

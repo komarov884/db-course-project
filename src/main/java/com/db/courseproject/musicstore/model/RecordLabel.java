@@ -1,6 +1,7 @@
 package com.db.courseproject.musicstore.model;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * Record label entity.
@@ -10,9 +11,10 @@ import lombok.Data;
  * @author Vasilii Komarov
  */
 @Data
+@Accessors(chain = true)
 public class RecordLabel {
-    private long id;
+    private Long id;
     private String name;
     private String country;
-    private int foundationYear;
+    private Integer foundationYear;
 }
