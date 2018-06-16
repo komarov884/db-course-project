@@ -10,11 +10,31 @@ import com.db.courseproject.musicstore.util.DBConnection;
 import lombok.RequiredArgsConstructor;
 import org.apache.log4j.Logger;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.Types;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.db.courseproject.musicstore.util.DBConstants.*;
+import static com.db.courseproject.musicstore.util.DBConstants.SCHEMA;
+import static com.db.courseproject.musicstore.util.DBConstants.ID;
+import static com.db.courseproject.musicstore.util.DBConstants.ALBUM_PRODUCER_TABLE;
+import static com.db.courseproject.musicstore.util.DBConstants.ALBUM_PRODUCER_ALBUM_ID;
+import static com.db.courseproject.musicstore.util.DBConstants.ALBUM_PRODUCER_PRODUCER_ID;
+import static com.db.courseproject.musicstore.util.DBConstants.ALBUMS_TABLE;
+import static com.db.courseproject.musicstore.util.DBConstants.ALBUMS_TITLE;
+import static com.db.courseproject.musicstore.util.DBConstants.ALBUMS_ISSUE_YEAR;
+import static com.db.courseproject.musicstore.util.DBConstants.ALBUMS_PRICE;
+import static com.db.courseproject.musicstore.util.DBConstants.ALBUMS_GENRE;
+import static com.db.courseproject.musicstore.util.DBConstants.ALBUMS_ARTIST_ID;
+import static com.db.courseproject.musicstore.util.DBConstants.ALBUMS_RECORD_LABEL_ID;
+import static com.db.courseproject.musicstore.util.DBConstants.SONG_AUTHOR_TABLE;
+import static com.db.courseproject.musicstore.util.DBConstants.SONG_AUTHOR_AUTHOR_ID;
+import static com.db.courseproject.musicstore.util.DBConstants.SONGS_TABLE;
+import static com.db.courseproject.musicstore.util.DBConstants.SONGS_ALBUM_ID;
 
 /**
  * <p>

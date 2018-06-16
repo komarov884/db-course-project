@@ -45,7 +45,12 @@ import static com.db.courseproject.musicstore.util.EntitiesConstants.ALBUM_TITLE
 import static com.db.courseproject.musicstore.util.EntitiesConstants.ALBUM_ISSUE_YEAR;
 import static com.db.courseproject.musicstore.util.EntitiesConstants.ALBUM_PRICE;
 import static com.db.courseproject.musicstore.util.EntitiesConstants.ALBUM_GENRE;
-import static com.db.courseproject.musicstore.util.ViewConstants.*;
+import static com.db.courseproject.musicstore.util.ViewConstants.CSS_FILE;
+import static com.db.courseproject.musicstore.util.ViewConstants.MAIN_FORM_FXML;
+import static com.db.courseproject.musicstore.util.ViewConstants.MAIN_FORM_TITLE;
+import static com.db.courseproject.musicstore.util.ViewConstants.CREATE_UPDATE_ALBUM_CONTROLLER_FXML;
+import static com.db.courseproject.musicstore.util.ViewConstants.CREATE_ALBUM_CONTROLLER_TITLE;
+import static com.db.courseproject.musicstore.util.ViewConstants.UPDATE_ALBUM_CONTROLLER_TITLE;
 
 /**
  * <p>
