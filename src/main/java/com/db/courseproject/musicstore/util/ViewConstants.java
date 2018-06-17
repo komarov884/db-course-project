@@ -32,12 +32,28 @@ public class ViewConstants {
     public static final String AUTHOR_CONTROLLER_FXML = "forms/Author.fxml";
     public static final String AUTHOR_CONTROLLER_TITLE = "Authors";
 
+    public static final String CREATE_UPDATE_AUTHOR_CONTROLLER_FXML = "forms/CreateUpdateAuthor.fxml";
+    public static final String CREATE_AUTHOR_CONTROLLER_TITLE = "Create author";
+    public static final String UPDATE_AUTHOR_CONTROLLER_TITLE = "Update author";
+
     public static final String PRODUCER_CONTROLLER_FXML = "forms/Producer.fxml";
     public static final String PRODUCER_CONTROLLER_TITLE = "Producers";
+
+    public static final String CREATE_UPDATE_PRODUCER_CONTROLLER_FXML = "forms/CreateUpdateProducer.fxml";
+    public static final String CREATE_PRODUCER_CONTROLLER_TITLE = "Create producer";
+    public static final String UPDATE_PRODUCER_CONTROLLER_TITLE = "Update producer";
 
     public static final String RECORD_LABEL_CONTROLLER_FXML = "forms/RecordLabel.fxml";
     public static final String RECORD_LABEL_CONTROLLER_TITLE = "Record labels";
 
+    public static final String CREATE_UPDATE_RECORD_LABEL_CONTROLLER_FXML = "forms/CreateUpdateRecordLabel.fxml";
+    public static final String CREATE_RECORD_LABEL_CONTROLLER_TITLE = "Create record label";
+    public static final String UPDATE_RECORD_LABEL_CONTROLLER_TITLE = "Update record label";
+
     public static final String SONG_CONTROLLER_FXML = "forms/Song.fxml";
     public static final String SONG_CONTROLLER_TITLE = "Songs";
+
+    public static final String CREATE_UPDATE_SONG_CONTROLLER_FXML = "forms/CreateUpdateSong.fxml";
+    public static final String CREATE_SONG_CONTROLLER_TITLE = "Create song";
+    public static final String UPDATE_SONG_CONTROLLER_TITLE = "Update song";
 }

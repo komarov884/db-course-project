@@ -24,4 +24,13 @@ public class EntitiesConstants {
     public static final String MEMBER_NAME = "name";
     public static final String MEMBER_BIRTH_DATE = "birthDate";
 
+    public static final String AUTHOR_AUTHOR_TYPE = "authorType";
+
+    public static final String RECORD_LABEL_NAME = "name";
+    public static final String RECORD_LABEL_COUNTRY = "country";
+    public static final String RECORD_LABEL_FOUNDATION_YEAR = "foundationYear";
+
+    public static final String SONG_ORDER_NUMBER = "orderNumber";
+    public static final String SONG_TITLE = "title";
+    public static final String SONG_AUTHORS = "authors";
 }
