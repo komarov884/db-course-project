@@ -168,6 +168,18 @@ public class ArtistController implements Initializable {
         }
     }
 
+    protected void createArtist(Artist artist) {
+        this.artists.clear();
+        Artist createdArtist = artistService.create(artist);
+        this.artists.add(createdArtist);
+    }
+
+    protected void updateArtist(Artist artist, Long id) {
+        this.artists.clear();
+        Artist updatedArtist = artistService.update(artist, id);
+        this.artists.add(updatedArtist);
+    }
+
     private void showCreateUpdateWindow(String fxmlFileName, String title, boolean isCreationOperation) {
         Stage createUpdateArtistStage = new Stage();
         URL fxmlFile = ClassLoader.getSystemClassLoader().getResource(fxmlFileName);
