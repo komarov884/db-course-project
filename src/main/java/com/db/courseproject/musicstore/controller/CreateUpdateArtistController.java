@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.apache.log4j.Logger;
@@ -30,8 +31,9 @@ public class CreateUpdateArtistController implements Initializable {
     private TextField tfFirstName;
     @FXML
     private TextField tfLastName;
+
     @FXML
-    private TextField tfBirthDate;
+    private DatePicker dpBirthDate;
 
     @FXML
     private Button btConfirm;
@@ -115,7 +117,7 @@ public class CreateUpdateArtistController implements Initializable {
     }
 
     private Date getBirthDate() {
-        if (tfBirthDate.getText().isEmpty()) {
+        if (dpBirthDate.getValue() == null) {
             return null;
         } else { //todo DATE FORMAT
             return null; //TODO TODO
@@ -126,11 +128,6 @@ public class CreateUpdateArtistController implements Initializable {
         tfId.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
                 tfId.setText(newValue.replaceAll("[^\\d]", ""));
-            }
-        });
-        tfBirthDate.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*") && !newValue.matches("-")) {
-                tfBirthDate.setText(newValue.replaceAll("[^\\d-]", ""));
             }
         });
     }
