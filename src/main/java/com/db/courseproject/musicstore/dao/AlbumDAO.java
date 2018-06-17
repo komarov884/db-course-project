@@ -32,7 +32,7 @@ import static com.db.courseproject.musicstore.util.DBConstants.ALBUMS_GENRE;
 import static com.db.courseproject.musicstore.util.DBConstants.ALBUMS_ARTIST_ID;
 import static com.db.courseproject.musicstore.util.DBConstants.ALBUMS_RECORD_LABEL_ID;
 import static com.db.courseproject.musicstore.util.DBConstants.SONG_AUTHOR_TABLE;
-import static com.db.courseproject.musicstore.util.DBConstants.SONG_AUTHOR_AUTHOR_ID;
+import static com.db.courseproject.musicstore.util.DBConstants.SONG_AUTHOR_SONG_ID;
 import static com.db.courseproject.musicstore.util.DBConstants.SONGS_TABLE;
 import static com.db.courseproject.musicstore.util.DBConstants.SONGS_ALBUM_ID;
 
@@ -201,7 +201,7 @@ public class AlbumDAO implements DAO<Album> {
                 SCHEMA, SONGS_TABLE, SONGS_ALBUM_ID);
         final String deleteSongAuthorSql =
                 String.format("DELETE FROM %s.%s WHERE %s IN (SELECT %s FROM %s.%s WHERE %s = ?)",
-                        SCHEMA, SONG_AUTHOR_TABLE, SONG_AUTHOR_AUTHOR_ID, ID, SCHEMA, SONGS_TABLE, SONGS_ALBUM_ID);
+                        SCHEMA, SONG_AUTHOR_TABLE, SONG_AUTHOR_SONG_ID, ID, SCHEMA, SONGS_TABLE, SONGS_ALBUM_ID);
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement albumsStatement = connection.prepareStatement(deleteAlbumsSql);
              PreparedStatement albumProducerStatement = connection.prepareStatement(deleteAlbumProducerSql);
