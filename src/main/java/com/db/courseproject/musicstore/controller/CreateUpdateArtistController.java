@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import org.apache.log4j.Logger;
 
 import java.net.URL;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -119,8 +120,8 @@ public class CreateUpdateArtistController implements Initializable {
     private Date getBirthDate() {
         if (dpBirthDate.getValue() == null) {
             return null;
-        } else { //todo DATE FORMAT
-            return null; //TODO TODO
+        } else {
+            return Date.from(dpBirthDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()); //TODO! doesnt work!!!!
         }
     }
 

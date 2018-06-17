@@ -73,43 +73,6 @@ public class ProducerDAO implements DAO<Producer> {
         return null;
     }
 
-    public List<Producer> findAllByIds(List<Long> producerIds) throws DAOException {
-        if (producerIds == null || producerIds.isEmpty()) {
-            return Collections.EMPTY_LIST;
-        }
-        final String condition = buildCondition(producerIds);
-        final String sql = String.format("SELECT %s, %s, %s, %s FROM %s.%s WHERE %s IN %s",
-                ID, PRODUCERS_FIRST_NAME, PRODUCERS_LAST_NAME, PRODUCERS_BIRTH_DATE,
-                SCHEMA, PRODUCERS_TABLE, ID, condition);
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            try (ResultSet resultSet = statement.executeQuery()) {
-                List<Producer> producers = new ArrayList<>();
-                while (resultSet.next()) {
-                    producers.add(parse(resultSet));
-                }
-                return producers;
-            } catch (SQLException e) {
-                throw new DAOException(e);
-            }
-        } catch (SQLException e) {
-            throw new DAOException(e);
-        }
-    }
-
-    private String buildCondition(List<Long> producerIds) {
-        StringBuilder builder = new StringBuilder("(");
-        Iterator<Long> iterator = producerIds.iterator();
-        while (iterator.hasNext()) {
-            builder.append(iterator.next());
-            if (iterator.hasNext()) {
-                builder.append(", ");
-            }
-        }
-        builder.append(")");
-        return builder.toString();
-    }
-
     private Producer parse(ResultSet resultSet) throws SQLException {
         return (Producer) new Producer().setId(resultSet.getLong(ID))
                 .setName(new FullName()

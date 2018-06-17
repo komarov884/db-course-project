@@ -1,6 +1,8 @@
 package com.db.courseproject.musicstore.controller;
 
 import com.db.courseproject.musicstore.dao.ArtistDAO;
+import com.db.courseproject.musicstore.dao.AlbumDAO;
+import com.db.courseproject.musicstore.exception.ForeignKeyViolationException;
 import com.db.courseproject.musicstore.model.Artist;
 import com.db.courseproject.musicstore.model.FullName;
 import com.db.courseproject.musicstore.service.ArtistService;
@@ -17,6 +19,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
@@ -86,7 +89,7 @@ public class ArtistController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        artistService = new ArtistService(new ArtistDAO());
+        artistService = new ArtistService(new ArtistDAO(), new AlbumDAO());
         setCellValueFactories();
         artists = FXCollections.observableArrayList();
         artistTable.setItems(artists);
@@ -140,6 +143,13 @@ public class ArtistController implements Initializable {
             artistService.delete(id);
         } catch (NumberFormatException e) {
             LOGGER.error(e.getMessage());
+        } catch (ForeignKeyViolationException e) {
+            LOGGER.error(e.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error artist deleting");
+            alert.setHeaderText("Operation does not possible");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
         }
     }
 

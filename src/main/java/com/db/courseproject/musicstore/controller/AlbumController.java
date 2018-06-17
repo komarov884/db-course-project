@@ -114,9 +114,7 @@ public class AlbumController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        albumService = new AlbumService(new AlbumDAO(
-                new ArtistDAO(), new RecordLabelDAO(), new SongDAO(new AuthorDAO()), new ProducerDAO()
-        ));
+        albumService = new AlbumService(new AlbumDAO());
         setCellValueFactories();
         albums = FXCollections.observableArrayList();
         albumTable.setItems(albums);
