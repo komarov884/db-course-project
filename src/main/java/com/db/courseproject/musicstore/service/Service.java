@@ -29,9 +29,11 @@ public interface Service<Domain> {
     /**
      *
      * @param entity
+     * @param id
+     * @return
      * @throws ServiceException
      */
-    Domain update(Domain entity) throws ServiceException;
+    Domain update(Domain entity, Long id) throws ServiceException;
 
     /**
      *

@@ -152,62 +152,14 @@ public class AlbumController implements Initializable {
 
     @FXML
     private void btCreateClick(ActionEvent actionEvent) {
-        Stage createAlbumStage = new Stage();
-        URL fxmlFile = ClassLoader.getSystemClassLoader().getResource(CREATE_UPDATE_ALBUM_CONTROLLER_FXML);
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(fxmlFile);
-            Pane root = fxmlLoader.load();
-
-            CreateUpdateAlbumController controller = fxmlLoader.getController();
-            controller.setAlbumController(this);
-            controller.setTfIdDisable(true);
-
-            Scene scene = new Scene(root);
-
-            URL cssFile = ClassLoader.getSystemClassLoader().getResource(CSS_FILE);
-            scene.getStylesheets().add((cssFile).toExternalForm());
-
-            Stage mainStage = (Stage) btCreate.getScene().getWindow();
-
-            createAlbumStage.setTitle(CREATE_ALBUM_CONTROLLER_TITLE);
-            createAlbumStage.setResizable(false);
-            createAlbumStage.setScene(scene);
-            createAlbumStage.initModality(Modality.WINDOW_MODAL);
-            createAlbumStage.initOwner(mainStage);
-            createAlbumStage.show();
-        } catch (IOException e) {
-            LOGGER.error(String.format("Error loading fxml-file: %s", CREATE_UPDATE_ALBUM_CONTROLLER_FXML));
-        }
+        showCreateUpdateWindow(CREATE_UPDATE_ALBUM_CONTROLLER_FXML,
+                CREATE_ALBUM_CONTROLLER_TITLE, true);
     }
 
     @FXML
     private void btUpdateClick(ActionEvent actionEvent) {
-        Stage updateAlbumStage = new Stage();
-        URL fxmlFile = ClassLoader.getSystemClassLoader().getResource(CREATE_UPDATE_ALBUM_CONTROLLER_FXML);
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(fxmlFile);
-            Pane root = fxmlLoader.load();
-
-            CreateUpdateAlbumController controller = fxmlLoader.getController();
-            controller.setAlbumController(this);
-            controller.setTfIdDisable(false);
-
-            Scene scene = new Scene(root);
-
-            URL cssFile = ClassLoader.getSystemClassLoader().getResource(CSS_FILE);
-            scene.getStylesheets().add((cssFile).toExternalForm());
-
-            Stage mainStage = (Stage) btUpdate.getScene().getWindow();
-
-            updateAlbumStage.setTitle(UPDATE_ALBUM_CONTROLLER_TITLE);
-            updateAlbumStage.setResizable(false);
-            updateAlbumStage.setScene(scene);
-            updateAlbumStage.initModality(Modality.WINDOW_MODAL);
-            updateAlbumStage.initOwner(mainStage);
-            updateAlbumStage.show();
-        } catch (IOException e) {
-            LOGGER.error(String.format("Error loading fxml-file: %s", CREATE_UPDATE_ALBUM_CONTROLLER_FXML));
-        }
+        showCreateUpdateWindow(CREATE_UPDATE_ALBUM_CONTROLLER_FXML,
+                UPDATE_ALBUM_CONTROLLER_TITLE, false);
     }
 
     @FXML
@@ -298,15 +250,15 @@ public class AlbumController implements Initializable {
         }
     }
 
-    public void createAlbum(Album album) {
+    protected void createAlbum(Album album) {
         this.albums.clear();
         Album createdAlbum = albumService.create(album);
         this.albums.add(createdAlbum);
     }
 
-    public void updateAlbum(Album album) {
+    protected void updateAlbum(Album album, Long id) {
         this.albums.clear();
-        Album updatedAlbum = albumService.update(album);
+        Album updatedAlbum = albumService.update(album, id);
         this.albums.add(updatedAlbum);
     }
 
@@ -351,6 +303,35 @@ public class AlbumController implements Initializable {
             }
             return new SimpleObjectProperty<>(recordLabelId);
         });
+    }
+
+    private void showCreateUpdateWindow(String fxmlFileName, String title, boolean isCreationOperation) {
+        Stage createUpdateAlbumStage = new Stage();
+        URL fxmlFile = ClassLoader.getSystemClassLoader().getResource(fxmlFileName);
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(fxmlFile);
+            Pane root = fxmlLoader.load();
+
+            CreateUpdateAlbumController controller = fxmlLoader.getController();
+            controller.setAlbumController(this);
+            controller.setTfIdDisable(isCreationOperation);
+
+            Scene scene = new Scene(root);
+
+            URL cssFile = ClassLoader.getSystemClassLoader().getResource(CSS_FILE);
+            scene.getStylesheets().add((cssFile).toExternalForm());
+
+            Stage mainStage = (Stage) btCreate.getScene().getWindow();
+
+            createUpdateAlbumStage.setTitle(title);
+            createUpdateAlbumStage.setResizable(false);
+            createUpdateAlbumStage.setScene(scene);
+            createUpdateAlbumStage.initModality(Modality.WINDOW_MODAL);
+            createUpdateAlbumStage.initOwner(mainStage);
+            createUpdateAlbumStage.show();
+        } catch (IOException e) {
+            LOGGER.error(String.format("Error loading fxml-file: %s", fxmlFileName));
+        }
     }
 
     private void showInfoDialog(String title, String header, String context) {

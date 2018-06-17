@@ -25,6 +25,10 @@ public class ViewConstants {
     public static final String ARTIST_CONTROLLER_FXML = "forms/Artist.fxml";
     public static final String ARTIST_CONTROLLER_TITLE = "Artists";
 
+    public static final String CREATE_UPDATE_ARTIST_CONTROLLER_FXML = "forms/CreateUpdateArtist.fxml";
+    public static final String CREATE_ARTIST_CONTROLLER_TITLE = "Create artist";
+    public static final String UPDATE_ARTIST_CONTROLLER_TITLE = "Update artist";
+
     public static final String AUTHOR_CONTROLLER_FXML = "forms/Author.fxml";
     public static final String AUTHOR_CONTROLLER_TITLE = "Authors";
 

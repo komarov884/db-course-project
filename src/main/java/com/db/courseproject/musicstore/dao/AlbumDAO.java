@@ -139,7 +139,7 @@ public class AlbumDAO implements DAO<Album> {
                         ALBUMS_ARTIST_ID, ALBUMS_RECORD_LABEL_ID, ID);
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement insertAlbumsStatement =
-                     connection.prepareStatement(updateAlbumsSql, Statement.RETURN_GENERATED_KEYS)) {
+                     connection.prepareStatement(updateAlbumsSql)) {
             insertAlbumsStatement.setString(1, entity.getTitle());
             if (entity.getIssueYear() == null) {
                 insertAlbumsStatement.setNull(2, Types.INTEGER);
@@ -184,8 +184,6 @@ public class AlbumDAO implements DAO<Album> {
                     throw new DAOException(e);
                 }
             }
-
-
         } catch (SQLException e) {
             throw new DAOException(e);
         }

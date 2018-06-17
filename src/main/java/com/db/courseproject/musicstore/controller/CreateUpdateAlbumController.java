@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-
 /**
  * <p>
  * Created on 6/16/2018.
@@ -75,8 +74,9 @@ public class CreateUpdateAlbumController implements Initializable {
                 if (isCreationOperation) {
                     albumController.createAlbum(album);
                 } else {
-                    album.setId(getId());
-                    albumController.updateAlbum(album);
+                    Long id = getId();
+                    album.setId(id);
+                    albumController.updateAlbum(album, id);
                 }
 
                 btCancelClick(null);
@@ -89,6 +89,21 @@ public class CreateUpdateAlbumController implements Initializable {
                 alert.showAndWait();
             }
         }
+    }
+
+    @FXML
+    private void btCancelClick(ActionEvent actionEvent) {
+        Stage stage = (Stage) btCancel.getScene().getWindow();
+        stage.close();
+    }
+
+    protected void setTfIdDisable(boolean param) {
+        tfId.setDisable(param);
+        isCreationOperation = param;
+    }
+
+    protected void setAlbumController(AlbumController albumController) {
+        this.albumController = albumController;
     }
 
     private boolean checkRequiredFields() {
@@ -148,21 +163,6 @@ public class CreateUpdateAlbumController implements Initializable {
             }
             return producers;
         }
-    }
-
-    @FXML
-    private void btCancelClick(ActionEvent actionEvent) {
-        Stage stage = (Stage) btCancel.getScene().getWindow();
-        stage.close();
-    }
-
-    public void setTfIdDisable(boolean param) {
-        tfId.setDisable(param);
-        isCreationOperation = param;
-    }
-
-    public void setAlbumController(AlbumController albumController) {
-        this.albumController = albumController;
     }
 
     private void addListenersOnTextFields() {

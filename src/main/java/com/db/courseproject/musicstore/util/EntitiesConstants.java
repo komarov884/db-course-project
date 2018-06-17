@@ -21,5 +21,7 @@ public class EntitiesConstants {
     public static final String ALBUM_RECORD_LABEL = "recordLabel";
     public static final String ALBUM_SONGS = "songs";
 
+    public static final String MEMBER_NAME = "name";
+    public static final String MEMBER_BIRTH_DATE = "birthDate";
 
 }

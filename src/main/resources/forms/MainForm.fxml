@@ -16,11 +16,11 @@
                      <VBox.margin>
                         <Insets left="40.0" top="31.0" />
                      </VBox.margin></Button>
-                  <Button mnemonicParsing="false" prefWidth="90.0" text="Artists">
+                  <Button fx:id="btArtists" mnemonicParsing="false" prefWidth="90.0" onAction="#btArtistsClick" text="Artists">
                      <VBox.margin>
                         <Insets left="40.0" top="31.0" />
                      </VBox.margin></Button>
-                  <Button mnemonicParsing="false" prefWidth="90.0" text="Authors">
+                  <Button fx:id="btAuthors" mnemonicParsing="false" prefWidth="90.0" onAction="#btAuthorsClick" text="Authors">
                      <VBox.margin>
                         <Insets left="40.0" top="31.0" />
                      </VBox.margin></Button>
@@ -28,17 +28,17 @@
             </VBox>
             <VBox prefHeight="200.0" prefWidth="150.0">
                <children>
-                  <Button mnemonicParsing="false" prefWidth="90.0" text="Producers">
+                  <Button fx:id="btProducers" mnemonicParsing="false" prefWidth="90.0" onAction="#btProducersClick" text="Producers">
                      <VBox.margin>
                         <Insets left="20.0" top="31.0" />
                      </VBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" prefWidth="90.0" text="Record labels">
+                  <Button fx:id="btRecordLabels" mnemonicParsing="false" prefWidth="90.0" onAction="#btRecordLabelsClick" text="Record labels">
                      <VBox.margin>
                         <Insets left="20.0" top="31.0" />
                      </VBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" prefWidth="90.0" text="Songs">
+                  <Button fx:id="btSongs" mnemonicParsing="false" prefWidth="90.0" onAction="#btSongsClick" text="Songs">
                      <VBox.margin>
                         <Insets left="20.0" top="31.0" />
                      </VBox.margin>
