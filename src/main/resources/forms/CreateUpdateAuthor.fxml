@@ -10,13 +10,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.ComboBox?>
 
-<AnchorPane maxHeight="180.0" maxWidth="260.0" minHeight="180.0" minWidth="260.0" prefHeight="180.0" prefWidth="260.0"
+<AnchorPane maxHeight="185.0" maxWidth="260.0" minHeight="185.0" minWidth="260.0" prefHeight="185.0" prefWidth="260.0"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.db.courseproject.musicstore.controller.CreateUpdateAuthorController">
     <children>
-        <VBox maxHeight="180.0" maxWidth="260.0" minHeight="180.0" minWidth="260.0" prefHeight="180.0"
-              prefWidth="260.0">
+        <VBox maxHeight="185.0" maxWidth="260.0" minHeight="185.0" minWidth="260.0" prefHeight="185.0" prefWidth="260.0">
             <children>
                 <HBox maxWidth="250.0" minWidth="250.0" prefHeight="25.0" prefWidth="250.0">
                     <children>
