@@ -1,7 +1,6 @@
 package com.db.courseproject.musicstore.controller;
 
 import com.db.courseproject.musicstore.dao.ArtistDAO;
-import com.db.courseproject.musicstore.dao.AlbumDAO;
 import com.db.courseproject.musicstore.exception.ForeignKeyViolationException;
 import com.db.courseproject.musicstore.model.Artist;
 import com.db.courseproject.musicstore.model.FullName;
@@ -89,7 +88,7 @@ public class ArtistController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        artistService = new ArtistService(new ArtistDAO(), new AlbumDAO());
+        artistService = new ArtistService(new ArtistDAO());
         setCellValueFactories();
         artists = FXCollections.observableArrayList();
         artistTable.setItems(artists);

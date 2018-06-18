@@ -1,6 +1,7 @@
 package com.db.courseproject.musicstore.dao;
 
 import com.db.courseproject.musicstore.exception.DAOException;
+import com.db.courseproject.musicstore.exception.ForeignKeyViolationException;
 import com.db.courseproject.musicstore.model.Artist;
 import com.db.courseproject.musicstore.model.FullName;
 import com.db.courseproject.musicstore.util.DBConnection;
@@ -21,6 +22,8 @@ import static com.db.courseproject.musicstore.util.DBConstants.ARTISTS_TABLE;
 import static com.db.courseproject.musicstore.util.DBConstants.ARTISTS_FIRST_NAME;
 import static com.db.courseproject.musicstore.util.DBConstants.ARTISTS_LAST_NAME;
 import static com.db.courseproject.musicstore.util.DBConstants.ARTISTS_BIRTH_DATE;
+import static com.db.courseproject.musicstore.util.DBConstants.ALBUMS_TABLE;
+import static com.db.courseproject.musicstore.util.DBConstants.ALBUMS_ARTIST_ID;
 
 /**
  * <p>
@@ -111,6 +114,7 @@ public class ArtistDAO implements DAO<Artist> {
                 SCHEMA, ARTISTS_TABLE, ID);
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement albumsStatement = connection.prepareStatement(deleteArtistsSql)) {
+            checkForeignRelations(id, connection);
             albumsStatement.setLong(1, id);
             albumsStatement.executeUpdate();
         } catch (SQLException e) {
@@ -130,6 +134,35 @@ public class ArtistDAO implements DAO<Artist> {
                     artists.add(parse(resultSet));
                 }
                 return artists;
+            } catch (SQLException e) {
+                throw new DAOException(e);
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+    }
+
+    private void checkForeignRelations(Long id, Connection connection) {
+        if (findAlbumsCountByArtistId(id, connection) > 0) {
+            throw new ForeignKeyViolationException(
+                    String.format("The %s table has still contained records with %s = %s",
+                            ALBUMS_TABLE, ALBUMS_ARTIST_ID, id)
+            );
+        }
+    }
+
+    private int findAlbumsCountByArtistId(Long artistId, Connection connection) {
+        final String countAlias = "total";
+        final String sql = String.format("SELECT COUNT(*) AS %s FROM %s.%s WHERE %s = ?",
+                countAlias, SCHEMA, ALBUMS_TABLE, ALBUMS_ARTIST_ID);
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, artistId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(countAlias);
+                } else {
+                    throw new DAOException("Error getting count of albums");
+                }
             } catch (SQLException e) {
                 throw new DAOException(e);
             }

@@ -35,16 +35,11 @@ public abstract class AbstractService<Domain> implements Service<Domain> {
 
     @Override
     public void delete(Long id) throws ServiceException {
-        checkForeignRelations(id);
         dao.delete(id);
     }
 
     @Override
     public List<Domain> findAll() throws ServiceException {
         return dao.findAll();
-    }
-
-    protected void checkForeignRelations(Long id) {
-
     }
 }
