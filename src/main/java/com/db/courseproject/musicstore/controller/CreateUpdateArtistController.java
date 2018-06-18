@@ -32,7 +32,6 @@ public class CreateUpdateArtistController implements Initializable {
     private TextField tfFirstName;
     @FXML
     private TextField tfLastName;
-
     @FXML
     private DatePicker dpBirthDate;
 

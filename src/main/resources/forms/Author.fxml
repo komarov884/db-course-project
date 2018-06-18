@@ -16,12 +16,13 @@
     <children>
         <VBox prefHeight="500.0" prefWidth="600.0">
             <children>
-                <TableView fx:id="artistTable" prefHeight="400.0" prefWidth="590.0">
+                <TableView fx:id="authorTable" prefHeight="400.0" prefWidth="590.0">
                     <columns>
                         <TableColumn fx:id="clId" editable="false" maxWidth="150.0" prefWidth="125.0" text="Id" />
                         <TableColumn fx:id="clFirstName" editable="false" maxWidth="255.0" prefWidth="125.0" text="First name" />
                         <TableColumn fx:id="clLastName" editable="false" maxWidth="255.0" prefWidth="125.0" text="Last name" />
                         <TableColumn fx:id="clBirthDate" editable="false" maxWidth="100.0" prefWidth="75.0" text="Birth date" />
+                        <TableColumn fx:id="clAuthorType" editable="false" maxWidth="100.0" prefWidth="85.0" text="Author type" />
                     </columns>
                     <VBox.margin>
                         <Insets left="5.0" top="5.0" />
