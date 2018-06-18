@@ -121,7 +121,7 @@ public class CreateUpdateArtistController implements Initializable {
         if (dpBirthDate.getValue() == null) {
             return null;
         } else {
-            return Date.from(dpBirthDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()); //TODO! doesnt work!!!!
+            return Date.from(dpBirthDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
         }
     }
 

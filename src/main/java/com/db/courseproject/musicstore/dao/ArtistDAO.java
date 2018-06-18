@@ -13,6 +13,7 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.sql.SQLException;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,9 +46,9 @@ public class ArtistDAO implements DAO<Artist> {
             insertArtistStatement.setString(1, entity.getName().getFirstName());
             insertArtistStatement.setString(2, entity.getName().getLastName());
             if (entity.getBirthDate() == null) {
-                insertArtistStatement.setNull(3, Types.DATE); //todo check it
+                insertArtistStatement.setNull(3, Types.DATE);
             } else {
-                insertArtistStatement.setObject(3, entity.getBirthDate());
+                insertArtistStatement.setObject(3, new Date(entity.getBirthDate().getTime()));
             }
             insertArtistStatement.executeUpdate();
             try (ResultSet resultSet = insertArtistStatement.getGeneratedKeys()) {
@@ -97,9 +98,9 @@ public class ArtistDAO implements DAO<Artist> {
             insertAlbumsStatement.setString(1, entity.getName().getFirstName());
             insertAlbumsStatement.setString(2, entity.getName().getLastName());
             if (entity.getBirthDate() == null) {
-                insertAlbumsStatement.setNull(3, Types.DATE); //todo check it
+                insertAlbumsStatement.setNull(3, Types.DATE);
             } else {
-                insertAlbumsStatement.setObject(3, entity.getBirthDate());
+                insertAlbumsStatement.setObject(3, new Date(entity.getBirthDate().getTime()));
             }
             insertAlbumsStatement.setLong(4, entity.getId());
             insertAlbumsStatement.executeUpdate();
