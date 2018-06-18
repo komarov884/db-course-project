@@ -1,15 +1,9 @@
 package com.db.courseproject.musicstore.controller;
 
 import com.db.courseproject.musicstore.dao.AlbumDAO;
-import com.db.courseproject.musicstore.dao.ArtistDAO;
-import com.db.courseproject.musicstore.dao.AuthorDAO;
-import com.db.courseproject.musicstore.dao.ProducerDAO;
-import com.db.courseproject.musicstore.dao.RecordLabelDAO;
-import com.db.courseproject.musicstore.dao.SongDAO;
-import com.db.courseproject.musicstore.exception.ServiceException;
+import com.db.courseproject.musicstore.exception.ForeignKeyViolationException;
 import com.db.courseproject.musicstore.model.Album;
 import com.db.courseproject.musicstore.model.Artist;
-import com.db.courseproject.musicstore.model.Author;
 import com.db.courseproject.musicstore.model.Producer;
 import com.db.courseproject.musicstore.model.RecordLabel;
 import com.db.courseproject.musicstore.model.Song;
@@ -168,6 +162,13 @@ public class AlbumController implements Initializable {
             albumService.delete(id);
         } catch (NumberFormatException e) {
             LOGGER.error(e.getMessage());
+        } catch (ForeignKeyViolationException e) {
+            LOGGER.error(e.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error album deleting");
+            alert.setHeaderText("Operation does not possible");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
         }
     }
 

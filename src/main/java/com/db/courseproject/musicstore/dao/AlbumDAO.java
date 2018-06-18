@@ -1,6 +1,7 @@
 package com.db.courseproject.musicstore.dao;
 
 import com.db.courseproject.musicstore.exception.DAOException;
+import com.db.courseproject.musicstore.exception.ForeignKeyViolationException;
 import com.db.courseproject.musicstore.model.Album;
 import com.db.courseproject.musicstore.model.Artist;
 import com.db.courseproject.musicstore.model.RecordLabel;
@@ -130,13 +131,13 @@ public class AlbumDAO implements DAO<Album> {
 
     @Override
     public Album findById(Long id) throws DAOException {
-        final String sql = String.format("SELECT %s, %s, %s, %s, %s, %s, %s FROM %s.%s WHERE %s = ?",
+        final String selectAlbumsSql = String.format("SELECT %s, %s, %s, %s, %s, %s, %s FROM %s.%s WHERE %s = ?",
                 ID, ALBUMS_TITLE, ALBUMS_ISSUE_YEAR, ALBUMS_PRICE, ALBUMS_GENRE, ALBUMS_ARTIST_ID,
                 ALBUMS_RECORD_LABEL_ID, SCHEMA, ALBUMS_TABLE, ID);
         try (Connection connection = DBConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, id);
-            try (ResultSet resultSet = statement.executeQuery()) {
+             PreparedStatement selectAlbumsStatement = connection.prepareStatement(selectAlbumsSql)) {
+            selectAlbumsStatement.setLong(1, id);
+            try (ResultSet resultSet = selectAlbumsStatement.executeQuery()) {
                 if (resultSet.next()) {
                     return parseAlbum(resultSet, connection);
                 } else {
@@ -158,28 +159,28 @@ public class AlbumDAO implements DAO<Album> {
                         SCHEMA, ALBUMS_TABLE, ALBUMS_TITLE, ALBUMS_ISSUE_YEAR, ALBUMS_PRICE, ALBUMS_GENRE,
                         ALBUMS_ARTIST_ID, ALBUMS_RECORD_LABEL_ID, ID);
         try (Connection connection = DBConnection.getConnection();
-             PreparedStatement insertAlbumsStatement =
+             PreparedStatement updateAlbumsStatement =
                      connection.prepareStatement(updateAlbumsSql)) {
-            insertAlbumsStatement.setString(1, entity.getTitle());
+            updateAlbumsStatement.setString(1, entity.getTitle());
             if (entity.getIssueYear() == null) {
-                insertAlbumsStatement.setNull(2, Types.INTEGER);
+                updateAlbumsStatement.setNull(2, Types.INTEGER);
             } else {
-                insertAlbumsStatement.setInt(2, entity.getIssueYear());
+                updateAlbumsStatement.setInt(2, entity.getIssueYear());
             }
-            insertAlbumsStatement.setInt(3, entity.getPrice());
+            updateAlbumsStatement.setInt(3, entity.getPrice());
             if (entity.getGenre() == null) {
-                insertAlbumsStatement.setNull(4, Types.VARCHAR);
+                updateAlbumsStatement.setNull(4, Types.VARCHAR);
             } else {
-                insertAlbumsStatement.setString(4, entity.getGenre());
+                updateAlbumsStatement.setString(4, entity.getGenre());
             }
-            insertAlbumsStatement.setLong(5, entity.getArtist().getId());
+            updateAlbumsStatement.setLong(5, entity.getArtist().getId());
             if (entity.getRecordLabel() == null) {
-                insertAlbumsStatement.setNull(6, Types.BIGINT);
+                updateAlbumsStatement.setNull(6, Types.BIGINT);
             } else {
-                insertAlbumsStatement.setLong(6, entity.getRecordLabel().getId());
+                updateAlbumsStatement.setLong(6, entity.getRecordLabel().getId());
             }
-            insertAlbumsStatement.setLong(7, entity.getId());
-            insertAlbumsStatement.executeUpdate();
+            updateAlbumsStatement.setLong(7, entity.getId());
+            updateAlbumsStatement.executeUpdate();
 
             final String deleteAlbumProducerSql = String.format("DELETE FROM %s.%s WHERE %s = ?",
                     SCHEMA, ALBUM_PRODUCER_TABLE, ALBUM_PRODUCER_ALBUM_ID);
@@ -211,31 +212,18 @@ public class AlbumDAO implements DAO<Album> {
 
     @Override
     public void delete(Long id) throws DAOException {
-        final String deleteAlbumsSql = String.format("DELETE FROM %s.%s WHERE %s = ?",
-                SCHEMA, ALBUMS_TABLE, ID);
         final String deleteAlbumProducerSql = String.format("DELETE FROM %s.%s WHERE %s = ?",
                 SCHEMA, ALBUM_PRODUCER_TABLE, ALBUM_PRODUCER_ALBUM_ID);
-        final String deleteSongsSql = String.format("DELETE FROM %s.%s WHERE %s = ?",
-                SCHEMA, SONGS_TABLE, SONGS_ALBUM_ID);
-        final String deleteSongAuthorSql =
-                String.format("DELETE FROM %s.%s WHERE %s IN (SELECT %s FROM %s.%s WHERE %s = ?)",
-                        SCHEMA, SONG_AUTHOR_TABLE, SONG_AUTHOR_SONG_ID, ID, SCHEMA, SONGS_TABLE, SONGS_ALBUM_ID);
+        final String deleteAlbumsSql = String.format("DELETE FROM %s.%s WHERE %s = ?",
+                SCHEMA, ALBUMS_TABLE, ID);
         try (Connection connection = DBConnection.getConnection();
-             PreparedStatement albumsStatement = connection.prepareStatement(deleteAlbumsSql);
-             PreparedStatement albumProducerStatement = connection.prepareStatement(deleteAlbumProducerSql);
-             PreparedStatement songsStatement = connection.prepareStatement(deleteSongsSql);
-             PreparedStatement songAuthorStatement = connection.prepareStatement(deleteSongAuthorSql)) {
-            songAuthorStatement.setLong(1, id);
-            songAuthorStatement.executeUpdate();
-
-            songsStatement.setLong(1, id);
-            songsStatement.executeUpdate();
-
-            albumProducerStatement.setLong(1, id);
-            albumProducerStatement.executeUpdate();
-
-            albumsStatement.setLong(1, id);
-            albumsStatement.executeUpdate();
+             PreparedStatement deleteAlbumProducerStatement = connection.prepareStatement(deleteAlbumProducerSql);
+             PreparedStatement deleteAlbumsStatement = connection.prepareStatement(deleteAlbumsSql)) {
+            checkForeignRelations(id, connection);
+            deleteAlbumProducerStatement.setLong(1, id);
+            deleteAlbumProducerStatement.executeUpdate();
+            deleteAlbumsStatement.setLong(1, id);
+            deleteAlbumsStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException(e);
         }
@@ -243,12 +231,12 @@ public class AlbumDAO implements DAO<Album> {
 
     @Override
     public List<Album> findAll() throws DAOException {
-        final String sql = String.format("SELECT %s, %s, %s, %s, %s, %s, %s FROM %s.%s",
+        final String selectAlbumsSql = String.format("SELECT %s, %s, %s, %s, %s, %s, %s FROM %s.%s",
                 ID, ALBUMS_TITLE, ALBUMS_ISSUE_YEAR, ALBUMS_PRICE, ALBUMS_GENRE, ALBUMS_ARTIST_ID,
                 ALBUMS_RECORD_LABEL_ID, SCHEMA, ALBUMS_TABLE);
         try (Connection connection = DBConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            try (ResultSet resultSet = statement.executeQuery()) {
+             PreparedStatement selectAlbumsStatement = connection.prepareStatement(selectAlbumsSql)) {
+            try (ResultSet resultSet = selectAlbumsStatement.executeQuery()) {
                 List<Album> albums = new ArrayList<>();
                 while (resultSet.next()) {
                     albums.add(parseAlbum(resultSet, connection));
@@ -263,34 +251,13 @@ public class AlbumDAO implements DAO<Album> {
     }
 
     public List<Album> findAllByTitle(String title) throws DAOException {
-        final String sql = String.format("SELECT %s, %s, %s, %s, %s, %s, %s FROM %s.%s WHERE %s LIKE ?",
+        final String selectAlbumsSql = String.format("SELECT %s, %s, %s, %s, %s, %s, %s FROM %s.%s WHERE %s LIKE ?",
                 ID, ALBUMS_TITLE, ALBUMS_ISSUE_YEAR, ALBUMS_PRICE, ALBUMS_GENRE, ALBUMS_ARTIST_ID,
                 ALBUMS_RECORD_LABEL_ID, SCHEMA, ALBUMS_TABLE, ALBUMS_TITLE);
         try (Connection connection = DBConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, String.format("%%%s%%", title));
-            try (ResultSet resultSet = statement.executeQuery()) {
-                List<Album> albums = new ArrayList<>();
-                while (resultSet.next()) {
-                    albums.add(parseAlbum(resultSet, connection));
-                }
-                return albums;
-            } catch (SQLException e) {
-                throw new DAOException(e);
-            }
-        } catch (SQLException e) {
-            throw new DAOException(e);
-        }
-    }
-
-    public List<Album> findAllByArtistId(Long artistId) throws DAOException {
-        final String sql = String.format("SELECT %s, %s, %s, %s, %s, %s, %s FROM %s.%s WHERE %s = ?",
-                ID, ALBUMS_TITLE, ALBUMS_ISSUE_YEAR, ALBUMS_PRICE, ALBUMS_GENRE, ALBUMS_ARTIST_ID,
-                ALBUMS_RECORD_LABEL_ID, SCHEMA, ALBUMS_TABLE, ALBUMS_ARTIST_ID);
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, artistId);
-            try (ResultSet resultSet = statement.executeQuery()) {
+             PreparedStatement selectAlbumsStatement = connection.prepareStatement(selectAlbumsSql)) {
+            selectAlbumsStatement.setString(1, String.format("%%%s%%", title));
+            try (ResultSet resultSet = selectAlbumsStatement.executeQuery()) {
                 List<Album> albums = new ArrayList<>();
                 while (resultSet.next()) {
                     albums.add(parseAlbum(resultSet, connection));
@@ -305,12 +272,12 @@ public class AlbumDAO implements DAO<Album> {
     }
 
     private List<Long> findProducerIdsByAlbumId(long albumId) throws SQLException {
-        final String sql = String.format("SELECT %s FROM %s.%s WHERE %s = ?",
+        final String selectAlbumProducerSql = String.format("SELECT %s FROM %s.%s WHERE %s = ?",
                 ALBUM_PRODUCER_PRODUCER_ID, SCHEMA, ALBUM_PRODUCER_TABLE, ALBUM_PRODUCER_ALBUM_ID);
         try (Connection connection = DBConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, albumId);
-            try (ResultSet resultSet = statement.executeQuery()) {
+             PreparedStatement selectAlbumProducerStatement = connection.prepareStatement(selectAlbumProducerSql)) {
+            selectAlbumProducerStatement.setLong(1, albumId);
+            try (ResultSet resultSet = selectAlbumProducerStatement.executeQuery()) {
                 List<Long> producerIds = new ArrayList<>();
                 while (resultSet.next()) {
                     producerIds.add(resultSet.getLong(ALBUM_PRODUCER_PRODUCER_ID));
@@ -325,11 +292,11 @@ public class AlbumDAO implements DAO<Album> {
     }
 
     private Artist findArtistById(Long artistId, Connection connection) {
-        final String sql = String.format("SELECT %s, %s, %s, %s FROM %s.%s WHERE %s = ?",
+        final String selectArtistsSql = String.format("SELECT %s, %s, %s, %s FROM %s.%s WHERE %s = ?",
                 ID, ARTISTS_FIRST_NAME, ARTISTS_LAST_NAME, ARTISTS_BIRTH_DATE, SCHEMA, ARTISTS_TABLE, ID);
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, artistId);
-            try (ResultSet resultSet = statement.executeQuery()) {
+        try (PreparedStatement selectArtistsStatement = connection.prepareStatement(selectArtistsSql)) {
+            selectArtistsStatement.setLong(1, artistId);
+            try (ResultSet resultSet = selectArtistsStatement.executeQuery()) {
                 if (resultSet.next()) {
                     return parseArtist(resultSet);
                 } else {
@@ -341,6 +308,144 @@ public class AlbumDAO implements DAO<Album> {
             }
         } catch (SQLException e) {
             throw new DAOException(e);
+        }
+    }
+
+    private List<Song> findAllSongsByAlbumId(Long albumId, Connection connection) {
+        if (albumId == 0) {
+            return Collections.EMPTY_LIST;
+        }
+        final String selectSongsSql = String.format("SELECT %s, %s, %s, %s FROM %s.%s WHERE %s = ?",
+                ID, SONGS_ALBUM_ID, SONGS_ORDER_NUMBER, SONGS_TITLE,
+                SCHEMA, SONGS_TABLE, SONGS_ALBUM_ID);
+        try (PreparedStatement selectSongsStatement = connection.prepareStatement(selectSongsSql)) {
+            selectSongsStatement.setLong(1, albumId);
+            try (ResultSet resultSet = selectSongsStatement.executeQuery()) {
+                List<Song> songs = new ArrayList<>();
+                while (resultSet.next()) {
+                    songs.add(parseSong(resultSet, connection));
+                }
+                return songs;
+            } catch (SQLException e) {
+                throw new DAOException(e);
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+    }
+
+    private RecordLabel findRecordLabelById(Long recordLabelId, Connection connection) {
+        final String selectRecordLabelsSql = String.format("SELECT %s, %s, %s, %s FROM %s.%s WHERE %s = ?",
+                ID, RECORD_LABELS_NAME, RECORD_LABELS_COUNTRY, RECORD_LABELS_FOUNDATION_YEAR, SCHEMA,
+                RECORD_LABELS_TABLE, ID);
+        try (PreparedStatement selectRecordLabelsStatement = connection.prepareStatement(selectRecordLabelsSql)) {
+            selectRecordLabelsStatement.setLong(1, recordLabelId);
+            try (ResultSet resultSet = selectRecordLabelsStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return parseRecordLabel(resultSet);
+                } else {
+                    LOGGER.info(String.format("Record label with id = %d not found", recordLabelId));
+                    return null;
+                }
+            } catch (SQLException e) {
+                throw new DAOException(e);
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+    }
+
+    private List<Long> findAuthorIdsBySongId(Long songId, Connection connection) throws SQLException {
+        final String selectSongAuthorSql = String.format("SELECT %s FROM %s.%s WHERE %s = ?",
+                SONG_AUTHOR_AUTHOR_ID, SCHEMA, SONG_AUTHOR_TABLE, SONG_AUTHOR_SONG_ID);
+        try (PreparedStatement selectSongAuthorStatement = connection.prepareStatement(selectSongAuthorSql)) {
+            selectSongAuthorStatement.setLong(1, songId);
+            try (ResultSet resultSet = selectSongAuthorStatement.executeQuery()) {
+                List<Long> authorIds = new ArrayList<>();
+                while (resultSet.next()) {
+                    authorIds.add(resultSet.getLong(SONG_AUTHOR_AUTHOR_ID));
+                }
+                return authorIds;
+            } catch (SQLException e) {
+                throw new SQLException(e);
+            }
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+    }
+
+    private List<Author> findAllAuthorsByIds(List<Long> authorIds, Connection connection) {
+        if (authorIds == null || authorIds.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+        final String condition = buildInCondition(authorIds);
+        final String selectAuthorsSql = String.format("SELECT %s, %s, %s, %s, %s FROM %s.%s WHERE %s IN %s",
+                ID, AUTHORS_FIRST_NAME, AUTHORS_LAST_NAME, AUTHORS_BIRTH_DATE, AUTHORS_AUTHOR_TYPE,
+                SCHEMA, AUTHORS_TABLE, ID, condition);
+        try (PreparedStatement selectAuthorsStatement = connection.prepareStatement(selectAuthorsSql)) {
+            try (ResultSet resultSet = selectAuthorsStatement.executeQuery()) {
+                List<Author> authors = new ArrayList<>();
+                while (resultSet.next()) {
+                    authors.add(parseAuthor(resultSet));
+                }
+                return authors;
+            } catch (SQLException e) {
+                throw new DAOException(e);
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+    }
+
+    private List<Producer> findAllProducersByIds(List<Long> producerIds, Connection connection) {
+        if (producerIds == null || producerIds.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+        final String condition = buildInCondition(producerIds);
+        final String selectProducersSql = String.format("SELECT %s, %s, %s, %s FROM %s.%s WHERE %s IN %s",
+                ID, PRODUCERS_FIRST_NAME, PRODUCERS_LAST_NAME, PRODUCERS_BIRTH_DATE,
+                SCHEMA, PRODUCERS_TABLE, ID, condition);
+        try (PreparedStatement selectProducersStatement = connection.prepareStatement(selectProducersSql)) {
+            try (ResultSet resultSet = selectProducersStatement.executeQuery()) {
+                List<Producer> producers = new ArrayList<>();
+                while (resultSet.next()) {
+                    producers.add(parseProducer(resultSet));
+                }
+                return producers;
+            } catch (SQLException e) {
+                throw new DAOException(e);
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+    }
+
+    private int findSongsCountByAlbumId(Long albumId, Connection connection) {
+        final String countAlias = "total";
+        final String selectSongsSql = String.format("SELECT COUNT(*) AS %s FROM %s.%s WHERE %s = ?",
+                countAlias, SCHEMA, SONGS_TABLE, SONGS_ALBUM_ID);
+        try (PreparedStatement selectSongsStatement = connection.prepareStatement(selectSongsSql)) {
+            selectSongsStatement.setLong(1, albumId);
+            try (ResultSet resultSet = selectSongsStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(countAlias);
+                } else {
+                    throw new DAOException("Error getting count of songs");
+                }
+            } catch (SQLException e) {
+                throw new DAOException(e);
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+    }
+
+    private void checkForeignRelations(Long id, Connection connection) {
+        if (findSongsCountByAlbumId(id, connection) > 0) {
+            throw new ForeignKeyViolationException(
+                    String.format("The %s table has still contained records with %s = %s",
+                            SONGS_TABLE, SONGS_ALBUM_ID, id)
+            );
         }
     }
 
@@ -373,115 +478,6 @@ public class AlbumDAO implements DAO<Album> {
         }
 
         return album;
-    }
-
-    private List<Song> findAllSongsByAlbumId(Long albumId, Connection connection) {
-        if (albumId == 0) {
-            return Collections.EMPTY_LIST;
-        }
-        final String sql = String.format("SELECT %s, %s, %s, %s FROM %s.%s WHERE %s = ?",
-                ID, SONGS_ALBUM_ID, SONGS_ORDER_NUMBER, SONGS_TITLE,
-                SCHEMA, SONGS_TABLE, SONGS_ALBUM_ID);
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, albumId);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                List<Song> songs = new ArrayList<>();
-                while (resultSet.next()) {
-                    songs.add(parseSong(resultSet, connection));
-                }
-                return songs;
-            } catch (SQLException e) {
-                throw new DAOException(e);
-            }
-        } catch (SQLException e) {
-            throw new DAOException(e);
-        }
-    }
-
-    private RecordLabel findRecordLabelById(Long recordLabelId, Connection connection) {
-        final String sql = String.format("SELECT %s, %s, %s, %s FROM %s.%s WHERE %s = ?",
-                ID, RECORD_LABELS_NAME, RECORD_LABELS_COUNTRY, RECORD_LABELS_FOUNDATION_YEAR, SCHEMA,
-                RECORD_LABELS_TABLE, ID);
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, recordLabelId);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return parseRecordLabel(resultSet);
-                } else {
-                    LOGGER.info(String.format("Record label with id = %d not found", recordLabelId));
-                    return null;
-                }
-            } catch (SQLException e) {
-                throw new DAOException(e);
-            }
-        } catch (SQLException e) {
-            throw new DAOException(e);
-        }
-    }
-
-    private List<Long> findAuthorIdsBySongId(Long songId, Connection connection) throws SQLException {
-        final String sql = String.format("SELECT %s FROM %s.%s WHERE %s = ?",
-                SONG_AUTHOR_AUTHOR_ID, SCHEMA, SONG_AUTHOR_TABLE, SONG_AUTHOR_SONG_ID);
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, songId);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                List<Long> authorIds = new ArrayList<>();
-                while (resultSet.next()) {
-                    authorIds.add(resultSet.getLong(SONG_AUTHOR_AUTHOR_ID));
-                }
-                return authorIds;
-            } catch (SQLException e) {
-                throw new SQLException(e);
-            }
-        } catch (SQLException e) {
-            throw new SQLException(e);
-        }
-    }
-
-    private List<Author> findAllAuthorsByIds(List<Long> authorIds, Connection connection) {
-        if (authorIds == null || authorIds.isEmpty()) {
-            return Collections.EMPTY_LIST;
-        }
-        final String condition = buildInCondition(authorIds);
-        final String sql = String.format("SELECT %s, %s, %s, %s, %s FROM %s.%s WHERE %s IN %s",
-                ID, AUTHORS_FIRST_NAME, AUTHORS_LAST_NAME, AUTHORS_BIRTH_DATE, AUTHORS_AUTHOR_TYPE,
-                SCHEMA, AUTHORS_TABLE, ID, condition);
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            try (ResultSet resultSet = statement.executeQuery()) {
-                List<Author> authors = new ArrayList<>();
-                while (resultSet.next()) {
-                    authors.add(parseAuthor(resultSet));
-                }
-                return authors;
-            } catch (SQLException e) {
-                throw new DAOException(e);
-            }
-        } catch (SQLException e) {
-            throw new DAOException(e);
-        }
-    }
-
-    private List<Producer> findAllProducersByIds(List<Long> producerIds, Connection connection) {
-        if (producerIds == null || producerIds.isEmpty()) {
-            return Collections.EMPTY_LIST;
-        }
-        final String condition = buildInCondition(producerIds);
-        final String sql = String.format("SELECT %s, %s, %s, %s FROM %s.%s WHERE %s IN %s",
-                ID, PRODUCERS_FIRST_NAME, PRODUCERS_LAST_NAME, PRODUCERS_BIRTH_DATE,
-                SCHEMA, PRODUCERS_TABLE, ID, condition);
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            try (ResultSet resultSet = statement.executeQuery()) {
-                List<Producer> producers = new ArrayList<>();
-                while (resultSet.next()) {
-                    producers.add(parseProducer(resultSet));
-                }
-                return producers;
-            } catch (SQLException e) {
-                throw new DAOException(e);
-            }
-        } catch (SQLException e) {
-            throw new DAOException(e);
-        }
     }
 
     private Artist parseArtist(ResultSet resultSet) throws SQLException {
