@@ -55,7 +55,8 @@ CREATE TABLE mstore.songs(
     "id"           BIGINT DEFAULT nextval('mstore.songs_id_seq') PRIMARY KEY,
     "album_id"     BIGINT REFERENCES mstore.albums (id) NOT NULL,
     "order_number" INTEGER NOT NULL,
-    "title"        VARCHAR(255) NOT NULL
+    "title"        VARCHAR(255) NOT NULL,
+    CONSTRAINT album_id_order_number_unique UNIQUE (album_id, order_number)
 );
 
 CREATE TABLE mstore.album_producer(

@@ -12,6 +12,122 @@
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.db.courseproject.musicstore.controller.SongController"
-            prefHeight="400.0" prefWidth="600.0">
-
+            prefHeight="585.0" prefWidth="550.0">
+    <children>
+        <VBox prefHeight="585.0" prefWidth="550.0">
+            <children>
+                <TableView fx:id="songTable" prefHeight="400.0" prefWidth="540.0">
+                    <columns>
+                        <TableColumn fx:id="clId" editable="false" maxWidth="150.0" prefWidth="125.0" text="Id"/>
+                        <TableColumn fx:id="clOrderNumber" editable="false" maxWidth="125.0" prefWidth="100.0" text="Order number"/>
+                        <TableColumn fx:id="clTitle" editable="false" maxWidth="255.0" prefWidth="150.0" text="Title"/>
+                    </columns>
+                    <VBox.margin>
+                        <Insets left="5.0" top="5.0"/>
+                    </VBox.margin>
+                </TableView>
+                <HBox prefHeight="35.0" prefWidth="790.0">
+                    <children>
+                        <Button fx:id="btShowAuthors" mnemonicParsing="false" prefWidth="100.0" onAction="#btShowAuthorsClick" text="Show authors">
+                            <HBox.margin>
+                                <Insets left="220.0" top="5.0"/>
+                            </HBox.margin>
+                        </Button>
+                    </children>
+                    <VBox.margin>
+                        <Insets left="5.0" top="5.0"/>
+                    </VBox.margin>
+                </HBox>
+                <HBox prefHeight="100.0" prefWidth="790.0">
+                    <children>
+                        <VBox prefHeight="200.0" prefWidth="395.0">
+                            <children>
+                                <HBox prefHeight="100.0" prefWidth="200.0">
+                                    <children>
+                                        <Button fx:id="btFindById" mnemonicParsing="false" prefWidth="100.0" onAction="#btFindByIdClick" text="Find by id">
+                                            <HBox.margin>
+                                                <Insets left="5.0" top="5.0"/>
+                                            </HBox.margin>
+                                        </Button>
+                                        <TextField fx:id="tfFindById">
+                                            <HBox.margin>
+                                                <Insets left="5.0" top="5.0"/>
+                                            </HBox.margin>
+                                        </TextField>
+                                    </children>
+                                </HBox>
+                                <HBox prefHeight="100.0" prefWidth="200.0">
+                                    <children>
+                                        <Button fx:id="btFindByTitle" mnemonicParsing="false" prefWidth="100.0" onAction="#btFindByTitleClick" text="Find by title">
+                                            <HBox.margin>
+                                                <Insets left="5.0" top="5.0"/>
+                                            </HBox.margin>
+                                        </Button>
+                                        <TextField fx:id="tfFindByTitle">
+                                            <HBox.margin>
+                                                <Insets left="5.0" top="5.0"/>
+                                            </HBox.margin>
+                                        </TextField>
+                                    </children>
+                                </HBox>
+                                <HBox prefHeight="100.0" prefWidth="200.0">
+                                    <children>
+                                        <Button fx:id="btFindAll" mnemonicParsing="false" prefWidth="100.0" onAction="#btFindAllClick" text="Find all">
+                                            <HBox.margin>
+                                                <Insets left="5.0" top="5.0"/>
+                                            </HBox.margin>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                        <VBox prefHeight="200.0" prefWidth="395.0">
+                            <children>
+                                <HBox prefHeight="100.0" prefWidth="200.0">
+                                    <children>
+                                        <Button fx:id="btCreate" mnemonicParsing="false" prefWidth="100.0" onAction="#btCreateClick" text="Create">
+                                            <HBox.margin>
+                                                <Insets left="5.0" top="5.0"/>
+                                            </HBox.margin>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox prefHeight="100.0" prefWidth="200.0">
+                                    <children>
+                                        <Button fx:id="btUpdate" mnemonicParsing="false" prefWidth="100.0" onAction="#btUpdateClick" text="Update">
+                                            <HBox.margin>
+                                                <Insets left="5.0" top="5.0"/>
+                                            </HBox.margin>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox prefHeight="100.0" prefWidth="200.0">
+                                    <children>
+                                        <Button fx:id="btDeleteById" mnemonicParsing="false" prefWidth="100.0" onAction="#btDeleteByIdClick" text="Delete by id">
+                                            <HBox.margin>
+                                                <Insets left="5.0" top="5.0"/>
+                                            </HBox.margin>
+                                        </Button>
+                                        <TextField fx:id="tfDeleteById">
+                                            <HBox.margin>
+                                                <Insets left="5.0" top="5.0"/>
+                                            </HBox.margin>
+                                        </TextField>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </children>
+                    <VBox.margin>
+                        <Insets left="5.0" top="5.0"/>
+                    </VBox.margin>
+                </HBox>
+                <Button fx:id="btMainMenu" mnemonicParsing="false" prefWidth="100.0" onAction="#btMainMenuClick" text="Main menu">
+                    <VBox.margin>
+                        <Insets left="225.0" top="5.0"/>
+                    </VBox.margin>
+                </Button>
+            </children>
+        </VBox>
+    </children>
 </AnchorPane>

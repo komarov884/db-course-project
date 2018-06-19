@@ -11,8 +11,6 @@ import javafx.stage.Stage;
 import org.apache.log4j.Logger;
 
 import java.net.URL;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.ResourceBundle;
 
 /**
