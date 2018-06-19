@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 /**
+ * Abstract parent for services.
  * <p>
  * Created on 6/17/2018.
  *

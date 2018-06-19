@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
+ * Class for database administration.
  * <p>
  * Created on 6/11/2018.
  *

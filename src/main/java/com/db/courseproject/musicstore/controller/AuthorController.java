@@ -43,6 +43,7 @@ import static com.db.courseproject.musicstore.util.ViewConstants.CREATE_AUTHOR_C
 import static com.db.courseproject.musicstore.util.ViewConstants.UPDATE_AUTHOR_CONTROLLER_TITLE;
 
 /**
+ * JavaFX form controller for Author.fxml.
  * <p>
  * Created on 6/11/2018.
  *

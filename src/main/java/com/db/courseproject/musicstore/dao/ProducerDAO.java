@@ -27,6 +27,7 @@ import static com.db.courseproject.musicstore.util.DBConstants.ALBUM_PRODUCER_TA
 import static com.db.courseproject.musicstore.util.DBConstants.ALBUM_PRODUCER_PRODUCER_ID;
 
 /**
+ * Data access object for working with {@link Producer}.
  * <p>
  * Created on 6/15/2018.
  *

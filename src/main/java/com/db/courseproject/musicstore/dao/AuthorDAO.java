@@ -29,6 +29,7 @@ import static com.db.courseproject.musicstore.util.DBConstants.SONG_AUTHOR_TABLE
 import static com.db.courseproject.musicstore.util.DBConstants.SONG_AUTHOR_AUTHOR_ID;
 
 /**
+ * Data access object for working with {@link Author}.
  * <p>
  * Created on 6/16/2018.
  *

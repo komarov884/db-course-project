@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
+ * JavaFX form controller for CreateUpdateSong.fxml.
  * <p>
  * Created on 6/17/2018.
  *

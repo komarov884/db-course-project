@@ -36,6 +36,7 @@ import static com.db.courseproject.musicstore.util.DBConstants.AUTHORS_BIRTH_DAT
 import static com.db.courseproject.musicstore.util.DBConstants.AUTHORS_AUTHOR_TYPE;
 
 /**
+ * Data access object for working with {@link Song}.
  * <p>
  * Created on 6/15/2018.
  *

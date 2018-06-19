@@ -27,6 +27,7 @@ import static com.db.courseproject.musicstore.util.DBConstants.ALBUMS_TABLE;
 import static com.db.courseproject.musicstore.util.DBConstants.ALBUMS_ARTIST_ID;
 
 /**
+ * Data access object for working with {@link Artist}.
  * <p>
  * Created on 6/14/2018.
  *

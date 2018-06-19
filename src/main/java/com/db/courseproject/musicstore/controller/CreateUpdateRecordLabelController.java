@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
+ * JavaFX form controller for CreateUpdateRecordLabel.fxml.
  * <p>
  * Created on 6/17/2018.
  *

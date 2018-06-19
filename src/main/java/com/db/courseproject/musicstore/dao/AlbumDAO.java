@@ -63,6 +63,7 @@ import static com.db.courseproject.musicstore.util.DBConstants.PRODUCERS_LAST_NA
 import static com.db.courseproject.musicstore.util.DBConstants.PRODUCERS_BIRTH_DATE;
 
 /**
+ * Data access object for working with {@link Album}.
  * <p>
  * Created on 6/11/2018.
  *

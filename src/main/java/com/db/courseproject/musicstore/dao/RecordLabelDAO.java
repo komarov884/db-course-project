@@ -25,6 +25,7 @@ import static com.db.courseproject.musicstore.util.DBConstants.ALBUMS_TABLE;
 import static com.db.courseproject.musicstore.util.DBConstants.ALBUMS_RECORD_LABEL_ID;
 
 /**
+ * Data access object for working with {@link RecordLabel}.
  * <p>
  * Created on 6/14/2018.
  *

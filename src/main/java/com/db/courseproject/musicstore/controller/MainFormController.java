@@ -29,7 +29,7 @@ import static com.db.courseproject.musicstore.util.ViewConstants.SONG_CONTROLLER
 import static com.db.courseproject.musicstore.util.ViewConstants.SONG_CONTROLLER_TITLE;
 
 /**
- * JavaFX controller for main form.
+ * JavaFX form controller for MainForm.fxml.
  * <p>
  * Created on 6/4/2018.
  *

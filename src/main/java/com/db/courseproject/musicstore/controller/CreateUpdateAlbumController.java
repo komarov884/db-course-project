@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
+ * JavaFX form controller for CreateUpdateAlbum.fxml.
  * <p>
  * Created on 6/16/2018.
  *

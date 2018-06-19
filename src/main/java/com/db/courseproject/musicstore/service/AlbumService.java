@@ -7,6 +7,7 @@ import com.db.courseproject.musicstore.model.Album;
 import java.util.List;
 
 /**
+ * Service for working with {@link Album}.
  * <p>
  * Created on 6/11/2018.
  *

@@ -40,6 +40,7 @@ import static com.db.courseproject.musicstore.util.ViewConstants.CREATE_RECORD_L
 import static com.db.courseproject.musicstore.util.ViewConstants.UPDATE_RECORD_LABEL_CONTROLLER_TITLE;
 
 /**
+ * JavaFX form controller for RecordLabel.fxml.
  * <p>
  * Created on 6/11/2018.
  *

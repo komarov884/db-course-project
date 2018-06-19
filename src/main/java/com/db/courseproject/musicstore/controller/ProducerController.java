@@ -41,6 +41,7 @@ import static com.db.courseproject.musicstore.util.ViewConstants.CREATE_PRODUCER
 import static com.db.courseproject.musicstore.util.ViewConstants.UPDATE_PRODUCER_CONTROLLER_TITLE;
 
 /**
+ * JavaFX form controller for Producer.fxml.
  * <p>
  * Created on 6/11/2018.
  *

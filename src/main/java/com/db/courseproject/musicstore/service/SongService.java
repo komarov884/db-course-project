@@ -6,6 +6,7 @@ import com.db.courseproject.musicstore.model.Song;
 import java.util.List;
 
 /**
+ * Service for working with {@link Song}.
  * <p>
  * Created on 6/17/2018.
  *

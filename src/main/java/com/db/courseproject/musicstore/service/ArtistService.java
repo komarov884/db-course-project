@@ -6,6 +6,7 @@ import com.db.courseproject.musicstore.model.Artist;
 import java.util.List;
 
 /**
+ * Service for working with {@link Artist}.
  * <p>
  * Created on 6/17/2018.
  *

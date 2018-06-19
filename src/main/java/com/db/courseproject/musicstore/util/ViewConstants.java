@@ -3,6 +3,7 @@ package com.db.courseproject.musicstore.util;
 import lombok.experimental.UtilityClass;
 
 /**
+ * Utility class with JavaFX views constants.
  * <p>
  * Created on 6/11/2018.
  *

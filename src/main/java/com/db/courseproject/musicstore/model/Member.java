@@ -6,7 +6,7 @@ import lombok.experimental.Accessors;
 import java.util.Date;
 
 /**
- * Member.
+ * Abstract parent for members of music industry.
  * <p>
  * Created on 5/14/2018.
  *

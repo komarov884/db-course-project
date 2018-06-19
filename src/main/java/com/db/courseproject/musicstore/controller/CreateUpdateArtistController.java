@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 /**
+ * JavaFX form controller for CreateUpdateArtist.fxml.
  * <p>
  * Created on 6/17/2018.
  *

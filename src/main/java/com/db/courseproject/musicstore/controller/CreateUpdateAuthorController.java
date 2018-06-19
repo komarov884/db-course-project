@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 /**
+ * JavaFX form controller for CreateUpdateAuthor.fxml.
  * <p>
  * Created on 6/17/2018.
  *

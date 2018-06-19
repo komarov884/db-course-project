@@ -41,6 +41,7 @@ import static com.db.courseproject.musicstore.util.ViewConstants.CREATE_ARTIST_C
 import static com.db.courseproject.musicstore.util.ViewConstants.UPDATE_ARTIST_CONTROLLER_TITLE;
 
 /**
+ * JavaFX form controller for Artist.fxml.
  * <p>
  * Created on 6/11/2018.
  *

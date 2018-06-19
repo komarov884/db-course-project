@@ -47,6 +47,7 @@ import static com.db.courseproject.musicstore.util.ViewConstants.CREATE_ALBUM_CO
 import static com.db.courseproject.musicstore.util.ViewConstants.UPDATE_ALBUM_CONTROLLER_TITLE;
 
 /**
+ * JavaFX form controller for Album.fxml.
  * <p>
  * Created on 6/11/2018.
  *

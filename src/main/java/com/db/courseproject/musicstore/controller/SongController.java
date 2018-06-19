@@ -42,6 +42,7 @@ import static com.db.courseproject.musicstore.util.ViewConstants.CREATE_SONG_CON
 import static com.db.courseproject.musicstore.util.ViewConstants.UPDATE_SONG_CONTROLLER_TITLE;
 
 /**
+ * JavaFX form controller for Song.fxml.
  * <p>
  * Created on 6/11/2018.
  *
