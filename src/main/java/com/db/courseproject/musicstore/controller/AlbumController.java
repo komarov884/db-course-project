@@ -360,14 +360,18 @@ public class AlbumController implements Initializable {
         return String.format("First name: %s\n"
                         + "Last name: %s\n"
                         + "Birth date: %s",
-                artist.getName().getFirstName(), artist.getName().getLastName(), artist.getBirthDate());
+                artist.getName().getFirstName(),
+                artist.getName().getLastName(),
+                artist.getBirthDate() == null ? "-" : artist.getBirthDate());
     }
 
     private String formatRecordLabel(RecordLabel recordLabel) {
         return String.format("Name: %s\n"
                         + "Country: %s\n"
                         + "Foundation year: %s",
-                recordLabel.getName(), recordLabel.getCountry(), recordLabel.getFoundationYear());
+                recordLabel.getName(),
+                recordLabel.getCountry() == null ? "-" : recordLabel.getCountry(),
+                recordLabel.getFoundationYear() == null ? "-" : recordLabel.getFoundationYear());
     }
 
     private String formatProducers(List<Producer> producers) {
@@ -379,7 +383,7 @@ public class AlbumController implements Initializable {
             builder.append(", ");
             builder.append(producer.getName().getLastName());
             builder.append(", ");
-            builder.append(producer.getBirthDate());
+            builder.append(producer.getBirthDate() == null ? "-" : producer.getBirthDate());
             builder.append("\n");
         }
         return builder.toString();

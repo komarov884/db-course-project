@@ -277,7 +277,7 @@ public class SongController implements Initializable {
             builder.append(", ");
             builder.append(author.getName().getLastName());
             builder.append(", ");
-            builder.append(author.getBirthDate());
+            builder.append(author.getBirthDate() == null ? "-" : author.getBirthDate());
             builder.append(", ");
             builder.append(author.getAuthorType());
             builder.append("\n");
