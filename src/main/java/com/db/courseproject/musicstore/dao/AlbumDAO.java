@@ -460,7 +460,7 @@ public class AlbumDAO implements DAO<Album> {
         Album album = new Album()
                 .setId(resultSet.getLong(ID))
                 .setTitle(resultSet.getString(ALBUMS_TITLE))
-                .setIssueYear(resultSet.getInt(ALBUMS_ISSUE_YEAR))
+                .setIssueYear(resultSet.getInt(ALBUMS_ISSUE_YEAR) == 0 ? null : resultSet.getInt(ALBUMS_ISSUE_YEAR))
                 .setPrice(resultSet.getInt(ALBUMS_PRICE))
                 .setGenre(resultSet.getString(ALBUMS_GENRE));
 
@@ -499,7 +499,8 @@ public class AlbumDAO implements DAO<Album> {
         return new RecordLabel().setId(resultSet.getLong(ID))
                 .setName(resultSet.getString(RECORD_LABELS_NAME))
                 .setCountry(resultSet.getString(RECORD_LABELS_COUNTRY))
-                .setFoundationYear(resultSet.getInt(RECORD_LABELS_FOUNDATION_YEAR));
+                .setFoundationYear(resultSet.getInt(RECORD_LABELS_FOUNDATION_YEAR) == 0 ? null
+                        : resultSet.getInt(RECORD_LABELS_FOUNDATION_YEAR));
     }
 
     private Song parseSong(ResultSet resultSet, Connection connection) throws SQLException {

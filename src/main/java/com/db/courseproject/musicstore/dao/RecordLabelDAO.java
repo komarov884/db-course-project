@@ -211,6 +211,7 @@ public class RecordLabelDAO implements DAO<RecordLabel> {
         return new RecordLabel().setId(resultSet.getLong(ID))
                 .setName(resultSet.getString(RECORD_LABELS_NAME))
                 .setCountry(resultSet.getString(RECORD_LABELS_COUNTRY))
-                .setFoundationYear(resultSet.getInt(RECORD_LABELS_FOUNDATION_YEAR));
+                .setFoundationYear(resultSet.getInt(RECORD_LABELS_FOUNDATION_YEAR) == 0 ? null
+                        : resultSet.getInt(RECORD_LABELS_FOUNDATION_YEAR));
     }
 }
