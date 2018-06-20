@@ -178,9 +178,13 @@ public class AlbumController implements Initializable {
         Album selectedAlbum = albumTable.getSelectionModel().getSelectedItem();
         if (selectedAlbum != null) {
             Artist selectedArtist = selectedAlbum.getArtist();
-            showInfoDialog("Artist info",
-                    String.format("Artist with id: %s", selectedArtist.getId()),
-                    formatArtist(selectedArtist));
+            if (selectedArtist != null) {
+                showInfoDialog("Artist info",
+                        String.format("Artist with id: %s", selectedArtist.getId()),
+                        formatArtist(selectedArtist));
+            } else {
+                showInfoDialog("Artist info", "No artists", "-");
+            }
         }
     }
 
@@ -219,9 +223,13 @@ public class AlbumController implements Initializable {
         Album selectedAlbum = albumTable.getSelectionModel().getSelectedItem();
         if (selectedAlbum != null) {
             List<Song> selectedSongs = selectedAlbum.getSongs();
-            showInfoDialog("Songs",
-                    String.format("Songs of album with id: %s", selectedAlbum.getId()),
-                    formatSongs(selectedSongs));
+            if (selectedSongs != null && !selectedSongs.isEmpty()) {
+                showInfoDialog("Songs",
+                        String.format("Songs of album with id: %s", selectedAlbum.getId()),
+                        formatSongs(selectedSongs));
+            } else {
+                showInfoDialog("Songs", "No songs", "-");
+            }
         }
     }
 
