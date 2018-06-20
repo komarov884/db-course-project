@@ -82,6 +82,7 @@ public class AlbumDAO implements DAO<Album> {
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement insertAlbumsStatement =
                      connection.prepareStatement(insertAlbumsSql, Statement.RETURN_GENERATED_KEYS)) {
+            connection.setAutoCommit(false);
             insertAlbumsStatement.setString(1, entity.getTitle());
             if (entity.getIssueYear() == null) {
                 insertAlbumsStatement.setNull(2, Types.INTEGER);
@@ -114,6 +115,7 @@ public class AlbumDAO implements DAO<Album> {
                                 insertAlbumProducerStatement.setLong(2, producer.getId());
                                 insertAlbumProducerStatement.executeUpdate();
                             }
+                            connection.commit();
                         } catch (SQLException e) {
                             throw new DAOException(e);
                         }
@@ -162,6 +164,7 @@ public class AlbumDAO implements DAO<Album> {
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement updateAlbumsStatement =
                      connection.prepareStatement(updateAlbumsSql)) {
+            connection.setAutoCommit(false);
             updateAlbumsStatement.setString(1, entity.getTitle());
             if (entity.getIssueYear() == null) {
                 updateAlbumsStatement.setNull(2, Types.INTEGER);
@@ -202,6 +205,7 @@ public class AlbumDAO implements DAO<Album> {
                         insertAlbumProducerStatement.setLong(2, producer.getId());
                         insertAlbumProducerStatement.executeUpdate();
                     }
+                    connection.commit();
                 } catch (SQLException e) {
                     throw new DAOException(e);
                 }
@@ -220,11 +224,13 @@ public class AlbumDAO implements DAO<Album> {
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement deleteAlbumProducerStatement = connection.prepareStatement(deleteAlbumProducerSql);
              PreparedStatement deleteAlbumsStatement = connection.prepareStatement(deleteAlbumsSql)) {
+            connection.setAutoCommit(false);
             checkForeignRelations(id, connection);
             deleteAlbumProducerStatement.setLong(1, id);
             deleteAlbumProducerStatement.executeUpdate();
             deleteAlbumsStatement.setLong(1, id);
             deleteAlbumsStatement.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
             throw new DAOException(e);
         }

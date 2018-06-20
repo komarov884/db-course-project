@@ -116,9 +116,11 @@ public class ArtistDAO implements DAO<Artist> {
                 SCHEMA, ARTISTS_TABLE, ID);
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement deleteArtistsStatement = connection.prepareStatement(deleteArtistsSql)) {
+            connection.setAutoCommit(false);
             checkForeignRelations(id, connection);
             deleteArtistsStatement.setLong(1, id);
             deleteArtistsStatement.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
             throw new DAOException(e);
         }

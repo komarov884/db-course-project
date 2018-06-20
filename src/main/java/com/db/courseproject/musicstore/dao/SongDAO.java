@@ -54,6 +54,7 @@ public class SongDAO implements DAO<Song> {
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement insertSongsStatement =
                      connection.prepareStatement(insertSongsSql, Statement.RETURN_GENERATED_KEYS)) {
+            connection.setAutoCommit(false);
             insertSongsStatement.setLong(1, extendedSong.getAlbumId());
             insertSongsStatement.setInt(2, extendedSong.getOrderNumber());
             insertSongsStatement.setString(3, extendedSong.getTitle());
@@ -71,6 +72,7 @@ public class SongDAO implements DAO<Song> {
                                 insertSongAuthorStatement.setLong(2, author.getId());
                                 insertSongAuthorStatement.executeUpdate();
                             }
+                            connection.commit();
                         } catch (SQLException e) {
                             throw new DAOException(e);
                         }
@@ -116,6 +118,7 @@ public class SongDAO implements DAO<Song> {
                         SCHEMA, SONGS_TABLE, SONGS_ALBUM_ID, SONGS_ORDER_NUMBER, SONGS_TITLE, ID);
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement updateSongsStatement = connection.prepareStatement(updateSongsSql)) {
+            connection.setAutoCommit(false);
             updateSongsStatement.setLong(1, extendedSong.getAlbumId());
             updateSongsStatement.setInt(2, extendedSong.getOrderNumber());
             updateSongsStatement.setString(3, extendedSong.getTitle());
@@ -141,6 +144,7 @@ public class SongDAO implements DAO<Song> {
                         insertSongAuthorStatement.setLong(2, author.getId());
                         insertSongAuthorStatement.executeUpdate();
                     }
+                    connection.commit();
                 } catch (SQLException e) {
                     throw new DAOException(e);
                 }
@@ -159,10 +163,12 @@ public class SongDAO implements DAO<Song> {
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement deleteSongAuthorStatement = connection.prepareStatement(deleteSongAuthorSql);
              PreparedStatement deleteSongsStatement = connection.prepareStatement(deleteSongsSql)) {
+            connection.setAutoCommit(false);
             deleteSongAuthorStatement.setLong(1, id);
             deleteSongAuthorStatement.executeUpdate();
             deleteSongsStatement.setLong(1, id);
             deleteSongsStatement.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
             throw new DAOException(e);
         }

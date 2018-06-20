@@ -125,9 +125,11 @@ public class RecordLabelDAO implements DAO<RecordLabel> {
                 SCHEMA, RECORD_LABELS_TABLE, ID);
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement deleteRecordLabelsStatement = connection.prepareStatement(deleteRecordLabelsSql)) {
+            connection.setAutoCommit(false);
             checkForeignRelations(id, connection);
             deleteRecordLabelsStatement.setLong(1, id);
             deleteRecordLabelsStatement.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
             throw new DAOException(e);
         }

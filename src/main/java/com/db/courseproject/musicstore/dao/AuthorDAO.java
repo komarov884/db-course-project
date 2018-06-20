@@ -123,9 +123,11 @@ public class AuthorDAO implements DAO<Author> {
                 SCHEMA, AUTHORS_TABLE, ID);
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement deleteAuthorsStatement = connection.prepareStatement(deleteAuthorsSql)) {
+            connection.setAutoCommit(false);
             checkForeignRelations(id, connection);
             deleteAuthorsStatement.setLong(1, id);
             deleteAuthorsStatement.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
             throw new DAOException(e);
         }

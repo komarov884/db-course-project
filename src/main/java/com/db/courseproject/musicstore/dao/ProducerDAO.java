@@ -117,9 +117,11 @@ public class ProducerDAO implements DAO<Producer> {
                 SCHEMA, PRODUCERS_TABLE, ID);
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement deleteProducersStatement = connection.prepareStatement(deleteProducersSql)) {
+            connection.setAutoCommit(false);
             checkForeignRelations(id, connection);
             deleteProducersStatement.setLong(1, id);
             deleteProducersStatement.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
             throw new DAOException(e);
         }
