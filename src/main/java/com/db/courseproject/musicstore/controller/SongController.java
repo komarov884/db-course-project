@@ -1,7 +1,9 @@
 package com.db.courseproject.musicstore.controller;
 
 import com.db.courseproject.musicstore.dao.SongDAO;
+import com.db.courseproject.musicstore.exception.EntityNotFoundException;
 import com.db.courseproject.musicstore.exception.ForeignKeyViolationException;
+import com.db.courseproject.musicstore.exception.ServiceException;
 import com.db.courseproject.musicstore.model.Author;
 import com.db.courseproject.musicstore.model.ExtendedSong;
 import com.db.courseproject.musicstore.model.Song;
@@ -105,7 +107,14 @@ public class SongController implements Initializable {
             Song song = songService.findById(id);
             this.songs.add(song);
         } catch (NumberFormatException e) {
-            LOGGER.error(e.getMessage());
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error id parsing", "Parsing operation does not possible");
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error song finding", "Operation does not possible");
+        } catch (EntityNotFoundException e) {
+            logExceptionAndShowAlert(Alert.AlertType.WARNING, e,
+                    "Song not found", "Song not found");
         }
     }
 
@@ -113,15 +122,25 @@ public class SongController implements Initializable {
     private void btFindByTitleClick(ActionEvent actionEvent) {
         this.songs.clear();
         String title = tfFindByTitle.getText();
-        List<Song> songs = songService.findAllByTitle(title);
-        this.songs.addAll(songs);
+        try {
+            List<Song> songs = songService.findAllByTitle(title);
+            this.songs.addAll(songs);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error song finding", "Operation does not possible");
+        }
     }
 
     @FXML
     private void btFindAllClick(ActionEvent actionEvent) {
         this.songs.clear();
-        List<Song> songs = songService.findAll();
-        this.songs.addAll(songs);
+        try {
+            List<Song> songs = songService.findAll();
+            this.songs.addAll(songs);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error song finding", "Operation does not possible");
+        }
     }
 
     @FXML
@@ -143,14 +162,11 @@ public class SongController implements Initializable {
             Long id = Long.parseLong(tfDeleteById.getText());
             songService.delete(id);
         } catch (NumberFormatException e) {
-            LOGGER.error(e.getMessage());
-        } catch (ForeignKeyViolationException e) {
-            LOGGER.error(e.getMessage());
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error song deleting");
-            alert.setHeaderText("Operation does not possible");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error id parsing", "Parsing operation does not possible");
+        } catch (ServiceException | ForeignKeyViolationException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error song deleting", "Operation does not possible");
         }
     }
 
@@ -190,39 +206,9 @@ public class SongController implements Initializable {
 
             ((Stage) ((Node) (actionEvent.getSource())).getScene().getWindow()).close();
         } catch (IOException e) {
-            LOGGER.error(String.format("Error loading fxml-file: %s", MAIN_FORM_FXML));
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error loading fxml-file", String.format("Error loading fxml-file: %s", MAIN_FORM_FXML));
         }
-    }
-
-    protected void createSong(ExtendedSong song) {
-        this.songs.clear();
-        Song createdSong = songService.create(song);
-        this.songs.add(createdSong);
-    }
-
-    protected void updateSong(ExtendedSong song, Long id) {
-        this.songs.clear();
-        Song updatedSong = songService.update(song, id);
-        this.songs.add(updatedSong);
-    }
-
-    private void addListenersOnTextFields() {
-        tfFindById.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) {
-                tfFindById.setText(newValue.replaceAll("[^\\d]", ""));
-            }
-        });
-        tfDeleteById.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) {
-                tfDeleteById.setText(newValue.replaceAll("[^\\d]", ""));
-            }
-        });
-    }
-
-    private void setCellValueFactories() {
-        clId.setCellValueFactory(new PropertyValueFactory<>(ID));
-        clOrderNumber.setCellValueFactory(new PropertyValueFactory<>(SONG_ORDER_NUMBER));
-        clTitle.setCellValueFactory(new PropertyValueFactory<>(SONG_TITLE));
     }
 
     private void showCreateUpdateWindow(String fxmlFileName, String title, boolean isCreationOperation) {
@@ -250,8 +236,50 @@ public class SongController implements Initializable {
             createUpdateSongStage.initOwner(mainStage);
             createUpdateSongStage.show();
         } catch (IOException e) {
-            LOGGER.error(String.format("Error loading fxml-file: %s", fxmlFileName));
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error loading fxml-file", String.format("Error loading fxml-file: %s", fxmlFileName));
         }
+    }
+
+    protected void createSong(ExtendedSong song) {
+        this.songs.clear();
+        try {
+            Song createdSong = songService.create(song);
+            this.songs.add(createdSong);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error song creating", "Operation does not possible");
+        }
+    }
+
+    protected void updateSong(ExtendedSong song, Long id) {
+        this.songs.clear();
+        try {
+            Song updatedSong = songService.update(song, id);
+            this.songs.add(updatedSong);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error song updating", "Operation does not possible");
+        }
+    }
+
+    private void addListenersOnTextFields() {
+        tfFindById.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                tfFindById.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
+        tfDeleteById.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                tfDeleteById.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
+    }
+
+    private void setCellValueFactories() {
+        clId.setCellValueFactory(new PropertyValueFactory<>(ID));
+        clOrderNumber.setCellValueFactory(new PropertyValueFactory<>(SONG_ORDER_NUMBER));
+        clTitle.setCellValueFactory(new PropertyValueFactory<>(SONG_TITLE));
     }
 
     private void showInfoDialog(String title, String header, String context) {
@@ -283,5 +311,24 @@ public class SongController implements Initializable {
             builder.append("\n");
         }
         return builder.toString();
+    }
+
+    private void logExceptionAndShowAlert(Alert.AlertType alertType, Exception e, String title, String headerText) {
+        switch (alertType) {
+            case ERROR:
+                LOGGER.error(e.getMessage());
+                break;
+            case WARNING:
+                LOGGER.warn(e.getMessage());
+                break;
+            default:
+                LOGGER.info(e.getMessage());
+                break;
+        }
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(e.getMessage());
+        alert.showAndWait();
     }
 }

@@ -1,7 +1,9 @@
 package com.db.courseproject.musicstore.controller;
 
 import com.db.courseproject.musicstore.dao.RecordLabelDAO;
+import com.db.courseproject.musicstore.exception.EntityNotFoundException;
 import com.db.courseproject.musicstore.exception.ForeignKeyViolationException;
+import com.db.courseproject.musicstore.exception.ServiceException;
 import com.db.courseproject.musicstore.model.RecordLabel;
 import com.db.courseproject.musicstore.service.RecordLabelService;
 import javafx.collections.FXCollections;
@@ -103,7 +105,14 @@ public class RecordLabelController implements Initializable {
             RecordLabel recordLabel = recordLabelService.findById(id);
             this.recordLabels.add(recordLabel);
         } catch (NumberFormatException e) {
-            LOGGER.error(e.getMessage());
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error id parsing", "Parsing operation does not possible");
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error record label finding", "Operation does not possible");
+        } catch (EntityNotFoundException e) {
+            logExceptionAndShowAlert(Alert.AlertType.WARNING, e,
+                    "Record label not found", "Record label not found");
         }
     }
 
@@ -111,15 +120,25 @@ public class RecordLabelController implements Initializable {
     private void btFindByNameClick(ActionEvent actionEvent) {
         this.recordLabels.clear();
         String name = tfFindByName.getText();
-        List<RecordLabel> recordLabels = recordLabelService.findAllByName(name);
-        this.recordLabels.addAll(recordLabels);
+        try {
+            List<RecordLabel> recordLabels = recordLabelService.findAllByName(name);
+            this.recordLabels.addAll(recordLabels);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error record label finding", "Operation does not possible");
+        }
     }
 
     @FXML
     private void btFindAllClick(ActionEvent actionEvent) {
         this.recordLabels.clear();
-        List<RecordLabel> recordLabels = recordLabelService.findAll();
-        this.recordLabels.addAll(recordLabels);
+        try {
+            List<RecordLabel> recordLabels = recordLabelService.findAll();
+            this.recordLabels.addAll(recordLabels);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error record label finding", "Operation does not possible");
+        }
     }
 
     @FXML
@@ -141,14 +160,11 @@ public class RecordLabelController implements Initializable {
             Long id = Long.parseLong(tfDeleteById.getText());
             recordLabelService.delete(id);
         } catch (NumberFormatException e) {
-            LOGGER.error(e.getMessage());
-        } catch (ForeignKeyViolationException e) {
-            LOGGER.error(e.getMessage());
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error record label deleting");
-            alert.setHeaderText("Operation does not possible");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error id parsing", "Parsing operation does not possible");
+        } catch (ServiceException | ForeignKeyViolationException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error record label deleting", "Operation does not possible");
         }
     }
 
@@ -173,20 +189,9 @@ public class RecordLabelController implements Initializable {
 
             ((Stage) ((Node) (actionEvent.getSource())).getScene().getWindow()).close();
         } catch (IOException e) {
-            LOGGER.error(String.format("Error loading fxml-file: %s", MAIN_FORM_FXML));
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error loading fxml-file", String.format("Error loading fxml-file: %s", MAIN_FORM_FXML));
         }
-    }
-
-    protected void createRecordLabel(RecordLabel recordLabel) {
-        this.recordLabels.clear();
-        RecordLabel createdRecordLabel = recordLabelService.create(recordLabel);
-        this.recordLabels.add(createdRecordLabel);
-    }
-
-    protected void updateRecordLabel(RecordLabel recordLabel, Long id) {
-        this.recordLabels.clear();
-        RecordLabel updatedRecordLabel = recordLabelService.update(recordLabel, id);
-        this.recordLabels.add(updatedRecordLabel);
     }
 
     private void showCreateUpdateWindow(String fxmlFileName, String title, boolean isCreationOperation) {
@@ -214,7 +219,30 @@ public class RecordLabelController implements Initializable {
             createUpdateRecordLabelStage.initOwner(mainStage);
             createUpdateRecordLabelStage.show();
         } catch (IOException e) {
-            LOGGER.error(String.format("Error loading fxml-file: %s", fxmlFileName));
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error loading fxml-file", String.format("Error loading fxml-file: %s", fxmlFileName));
+        }
+    }
+
+    protected void createRecordLabel(RecordLabel recordLabel) {
+        this.recordLabels.clear();
+        try {
+            RecordLabel createdRecordLabel = recordLabelService.create(recordLabel);
+            this.recordLabels.add(createdRecordLabel);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error record label creating", "Operation does not possible");
+        }
+    }
+
+    protected void updateRecordLabel(RecordLabel recordLabel, Long id) {
+        this.recordLabels.clear();
+        try {
+            RecordLabel updatedRecordLabel = recordLabelService.update(recordLabel, id);
+            this.recordLabels.add(updatedRecordLabel);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error record label updating", "Operation does not possible");
         }
     }
 
@@ -236,5 +264,24 @@ public class RecordLabelController implements Initializable {
         clName.setCellValueFactory(new PropertyValueFactory<>(RECORD_LABEL_NAME));
         clCountry.setCellValueFactory(new PropertyValueFactory<>(RECORD_LABEL_COUNTRY));
         clFoundationYear.setCellValueFactory(new PropertyValueFactory<>(RECORD_LABEL_FOUNDATION_YEAR));
+    }
+
+    private void logExceptionAndShowAlert(Alert.AlertType alertType, Exception e, String title, String headerText) {
+        switch (alertType) {
+            case ERROR:
+                LOGGER.error(e.getMessage());
+                break;
+            case WARNING:
+                LOGGER.warn(e.getMessage());
+                break;
+            default:
+                LOGGER.info(e.getMessage());
+                break;
+        }
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(e.getMessage());
+        alert.showAndWait();
     }
 }

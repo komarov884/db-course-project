@@ -1,6 +1,7 @@
 package com.db.courseproject.musicstore.service;
 
 import com.db.courseproject.musicstore.dao.AlbumDAO;
+import com.db.courseproject.musicstore.exception.DAOException;
 import com.db.courseproject.musicstore.exception.ServiceException;
 import com.db.courseproject.musicstore.model.Album;
 
@@ -22,6 +23,10 @@ public class AlbumService extends AbstractService<Album> {
     }
 
     public List<Album> findAllByTitle(String title) throws ServiceException {
-        return albumDAO.findAllByTitle(title);
+        try {
+            return albumDAO.findAllByTitle(title);
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
     }
 }

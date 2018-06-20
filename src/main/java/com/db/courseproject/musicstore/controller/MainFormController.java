@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
@@ -101,7 +102,27 @@ public class MainFormController {
 
             ((Stage) ((Node) (actionEvent.getSource())).getScene().getWindow()).close();
         } catch (IOException e) {
-            LOGGER.error(String.format("Error loading fxml-file: %s", fxmlFileName));
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error loading fxml-file", String.format("Error loading fxml-file: %s", fxmlFileName));
         }
+    }
+
+    private void logExceptionAndShowAlert(Alert.AlertType alertType, Exception e, String title, String headerText) {
+        switch (alertType) {
+            case ERROR:
+                LOGGER.error(e.getMessage());
+                break;
+            case WARNING:
+                LOGGER.warn(e.getMessage());
+                break;
+            default:
+                LOGGER.info(e.getMessage());
+                break;
+        }
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(e.getMessage());
+        alert.showAndWait();
     }
 }

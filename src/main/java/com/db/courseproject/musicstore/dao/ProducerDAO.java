@@ -1,11 +1,11 @@
 package com.db.courseproject.musicstore.dao;
 
 import com.db.courseproject.musicstore.exception.DAOException;
+import com.db.courseproject.musicstore.exception.EntityNotFoundException;
 import com.db.courseproject.musicstore.exception.ForeignKeyViolationException;
 import com.db.courseproject.musicstore.model.FullName;
 import com.db.courseproject.musicstore.model.Producer;
 import com.db.courseproject.musicstore.util.DBConnection;
-import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -34,8 +34,6 @@ import static com.db.courseproject.musicstore.util.DBConstants.ALBUM_PRODUCER_PR
  * @author Vasilii Komarov
  */
 public class ProducerDAO implements DAO<Producer> {
-    private static final Logger LOGGER = Logger.getLogger(ProducerDAO.class);
-
     @Override
     public Long create(Producer entity) throws DAOException {
         final String insertProducersSql =
@@ -78,8 +76,7 @@ public class ProducerDAO implements DAO<Producer> {
                 if (resultSet.next()) {
                     return parseProducer(resultSet);
                 } else {
-                    LOGGER.info(String.format("Producer with id = %d not found", id));
-                    return null;
+                    throw new EntityNotFoundException(String.format("Producer with id = %d not found", id));
                 }
             } catch (SQLException e) {
                 throw new DAOException(e);

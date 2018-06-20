@@ -1,6 +1,8 @@
 package com.db.courseproject.musicstore.service;
 
 import com.db.courseproject.musicstore.dao.RecordLabelDAO;
+import com.db.courseproject.musicstore.exception.DAOException;
+import com.db.courseproject.musicstore.exception.ServiceException;
 import com.db.courseproject.musicstore.model.RecordLabel;
 
 import java.util.List;
@@ -20,7 +22,11 @@ public class RecordLabelService extends AbstractService<RecordLabel> {
         this.recordLabelDAO = recordLabelDAO;
     }
 
-    public List<RecordLabel> findAllByName(String name) {
-        return recordLabelDAO.findAllByName(name);
+    public List<RecordLabel> findAllByName(String name) throws ServiceException {
+        try {
+            return recordLabelDAO.findAllByName(name);
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
     }
 }

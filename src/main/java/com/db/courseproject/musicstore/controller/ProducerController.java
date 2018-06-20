@@ -1,7 +1,9 @@
 package com.db.courseproject.musicstore.controller;
 
 import com.db.courseproject.musicstore.dao.ProducerDAO;
+import com.db.courseproject.musicstore.exception.EntityNotFoundException;
 import com.db.courseproject.musicstore.exception.ForeignKeyViolationException;
+import com.db.courseproject.musicstore.exception.ServiceException;
 import com.db.courseproject.musicstore.model.FullName;
 import com.db.courseproject.musicstore.model.Producer;
 import com.db.courseproject.musicstore.service.ProducerService;
@@ -104,7 +106,14 @@ public class ProducerController implements Initializable {
             Producer producer = producerService.findById(id);
             this.producers.add(producer);
         } catch (NumberFormatException e) {
-            LOGGER.error(e.getMessage());
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error id parsing", "Parsing operation does not possible");
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error producer finding", "Operation does not possible");
+        } catch (EntityNotFoundException e) {
+            logExceptionAndShowAlert(Alert.AlertType.WARNING, e,
+                    "Producer not found", "Producer not found");
         }
     }
 
@@ -112,15 +121,25 @@ public class ProducerController implements Initializable {
     private void btFindByNameClick(ActionEvent actionEvent) {
         this.producers.clear();
         String name = tfFindByName.getText();
-        List<Producer> producers = producerService.findAllByName(name);
-        this.producers.addAll(producers);
+        try {
+            List<Producer> producers = producerService.findAllByName(name);
+            this.producers.addAll(producers);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error producer finding", "Operation does not possible");
+        }
     }
 
     @FXML
     private void btFindAllClick(ActionEvent actionEvent) {
         this.producers.clear();
-        List<Producer> producers = producerService.findAll();
-        this.producers.addAll(producers);
+        try {
+            List<Producer> producers = producerService.findAll();
+            this.producers.addAll(producers);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error producer finding", "Operation does not possible");
+        }
     }
 
     @FXML
@@ -142,14 +161,11 @@ public class ProducerController implements Initializable {
             Long id = Long.parseLong(tfDeleteById.getText());
             producerService.delete(id);
         } catch (NumberFormatException e) {
-            LOGGER.error(e.getMessage());
-        } catch (ForeignKeyViolationException e) {
-            LOGGER.error(e.getMessage());
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error producer deleting");
-            alert.setHeaderText("Operation does not possible");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error id parsing", "Parsing operation does not possible");
+        } catch (ServiceException | ForeignKeyViolationException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error producer deleting", "Operation does not possible");
         }
     }
 
@@ -174,20 +190,9 @@ public class ProducerController implements Initializable {
 
             ((Stage) ((Node) (actionEvent.getSource())).getScene().getWindow()).close();
         } catch (IOException e) {
-            LOGGER.error(String.format("Error loading fxml-file: %s", MAIN_FORM_FXML));
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error loading fxml-file", String.format("Error loading fxml-file: %s", MAIN_FORM_FXML));
         }
-    }
-
-    protected void createProducer(Producer producer) {
-        this.producers.clear();
-        Producer createdProducer = producerService.create(producer);
-        this.producers.add(createdProducer);
-    }
-
-    protected void updateProducer(Producer producer, Long id) {
-        this.producers.clear();
-        Producer updatedProducer = producerService.update(producer, id);
-        this.producers.add(updatedProducer);
     }
 
     private void showCreateUpdateWindow(String fxmlFileName, String title, boolean isCreationOperation) {
@@ -215,7 +220,30 @@ public class ProducerController implements Initializable {
             createUpdateProducerStage.initOwner(mainStage);
             createUpdateProducerStage.show();
         } catch (IOException e) {
-            LOGGER.error(String.format("Error loading fxml-file: %s", fxmlFileName));
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error loading fxml-file", String.format("Error loading fxml-file: %s", fxmlFileName));
+        }
+    }
+
+    protected void createProducer(Producer producer) {
+        this.producers.clear();
+        try {
+            Producer createdProducer = producerService.create(producer);
+            this.producers.add(createdProducer);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error producer creating", "Operation does not possible");
+        }
+    }
+
+    protected void updateProducer(Producer producer, Long id) {
+        this.producers.clear();
+        try {
+            Producer updatedProducer = producerService.update(producer, id);
+            this.producers.add(updatedProducer);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error producer updating", "Operation does not possible");
         }
     }
 
@@ -257,5 +285,24 @@ public class ProducerController implements Initializable {
             return new SimpleStringProperty(lastName);
         });
         clBirthDate.setCellValueFactory(new PropertyValueFactory<>(MEMBER_BIRTH_DATE));
+    }
+
+    private void logExceptionAndShowAlert(Alert.AlertType alertType, Exception e, String title, String headerText) {
+        switch (alertType) {
+            case ERROR:
+                LOGGER.error(e.getMessage());
+                break;
+            case WARNING:
+                LOGGER.warn(e.getMessage());
+                break;
+            default:
+                LOGGER.info(e.getMessage());
+                break;
+        }
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(e.getMessage());
+        alert.showAndWait();
     }
 }

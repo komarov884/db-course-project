@@ -1,6 +1,8 @@
 package com.db.courseproject.musicstore.service;
 
 import com.db.courseproject.musicstore.dao.ArtistDAO;
+import com.db.courseproject.musicstore.exception.DAOException;
+import com.db.courseproject.musicstore.exception.ServiceException;
 import com.db.courseproject.musicstore.model.Artist;
 
 import java.util.List;
@@ -20,7 +22,11 @@ public class ArtistService extends AbstractService<Artist> {
         this.artistDAO = artistDAO;
     }
 
-    public List<Artist> findAllByName(String name) {
-        return artistDAO.findAllByName(name);
+    public List<Artist> findAllByName(String name) throws ServiceException {
+        try {
+            return artistDAO.findAllByName(name);
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
     }
 }

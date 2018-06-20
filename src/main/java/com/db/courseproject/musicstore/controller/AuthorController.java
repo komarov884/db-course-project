@@ -1,7 +1,9 @@
 package com.db.courseproject.musicstore.controller;
 
 import com.db.courseproject.musicstore.dao.AuthorDAO;
+import com.db.courseproject.musicstore.exception.EntityNotFoundException;
 import com.db.courseproject.musicstore.exception.ForeignKeyViolationException;
+import com.db.courseproject.musicstore.exception.ServiceException;
 import com.db.courseproject.musicstore.model.Author;
 import com.db.courseproject.musicstore.model.AuthorType;
 import com.db.courseproject.musicstore.model.FullName;
@@ -108,7 +110,14 @@ public class AuthorController implements Initializable {
             Author author = authorService.findById(id);
             this.authors.add(author);
         } catch (NumberFormatException e) {
-            LOGGER.error(e.getMessage());
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error id parsing", "Parsing operation does not possible");
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error author finding", "Operation does not possible");
+        } catch (EntityNotFoundException e) {
+            logExceptionAndShowAlert(Alert.AlertType.WARNING, e,
+                    "Author not found", "Author not found");
         }
     }
 
@@ -116,15 +125,25 @@ public class AuthorController implements Initializable {
     private void btFindByNameClick(ActionEvent actionEvent) {
         this.authors.clear();
         String name = tfFindByName.getText();
-        List<Author> authors = authorService.findAllByName(name);
-        this.authors.addAll(authors);
+        try {
+            List<Author> authors = authorService.findAllByName(name);
+            this.authors.addAll(authors);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error author finding", "Operation does not possible");
+        }
     }
 
     @FXML
     private void btFindAllClick(ActionEvent actionEvent) {
         this.authors.clear();
-        List<Author> authors = authorService.findAll();
-        this.authors.addAll(authors);
+        try {
+            List<Author> authors = authorService.findAll();
+            this.authors.addAll(authors);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error author finding", "Operation does not possible");
+        }
     }
 
     @FXML
@@ -146,14 +165,11 @@ public class AuthorController implements Initializable {
             Long id = Long.parseLong(tfDeleteById.getText());
             authorService.delete(id);
         } catch (NumberFormatException e) {
-            LOGGER.error(e.getMessage());
-        } catch (ForeignKeyViolationException e) {
-            LOGGER.error(e.getMessage());
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error author deleting");
-            alert.setHeaderText("Operation does not possible");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error id parsing", "Parsing operation does not possible");
+        } catch (ServiceException | ForeignKeyViolationException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error author deleting", "Operation does not possible");
         }
     }
 
@@ -178,20 +194,9 @@ public class AuthorController implements Initializable {
 
             ((Stage) ((Node) (actionEvent.getSource())).getScene().getWindow()).close();
         } catch (IOException e) {
-            LOGGER.error(String.format("Error loading fxml-file: %s", MAIN_FORM_FXML));
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error loading fxml-file", String.format("Error loading fxml-file: %s", MAIN_FORM_FXML));
         }
-    }
-
-    protected void createAuthor(Author author) {
-        this.authors.clear();
-        Author createdAuthor = authorService.create(author);
-        this.authors.add(createdAuthor);
-    }
-
-    protected void updateAuthor(Author author, Long id) {
-        this.authors.clear();
-        Author updatedAuthor = authorService.update(author, id);
-        this.authors.add(updatedAuthor);
     }
 
     private void showCreateUpdateWindow(String fxmlFileName, String title, boolean isCreationOperation) {
@@ -219,7 +224,30 @@ public class AuthorController implements Initializable {
             createUpdateAuthorStage.initOwner(mainStage);
             createUpdateAuthorStage.show();
         } catch (IOException e) {
-            LOGGER.error(String.format("Error loading fxml-file: %s", fxmlFileName));
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error loading fxml-file", String.format("Error loading fxml-file: %s", fxmlFileName));
+        }
+    }
+
+    protected void createAuthor(Author author) {
+        this.authors.clear();
+        try {
+            Author createdAuthor = authorService.create(author);
+            this.authors.add(createdAuthor);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error author creating", "Operation does not possible");
+        }
+    }
+
+    protected void updateAuthor(Author author, Long id) {
+        this.authors.clear();
+        try {
+            Author updatedAuthor = authorService.update(author, id);
+            this.authors.add(updatedAuthor);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error author updating", "Operation does not possible");
         }
     }
 
@@ -262,5 +290,24 @@ public class AuthorController implements Initializable {
         });
         clBirthDate.setCellValueFactory(new PropertyValueFactory<>(MEMBER_BIRTH_DATE));
         clAuthorType.setCellValueFactory(new PropertyValueFactory<>(AUTHOR_AUTHOR_TYPE));
+    }
+
+    private void logExceptionAndShowAlert(Alert.AlertType alertType, Exception e, String title, String headerText) {
+        switch (alertType) {
+            case ERROR:
+                LOGGER.error(e.getMessage());
+                break;
+            case WARNING:
+                LOGGER.warn(e.getMessage());
+                break;
+            default:
+                LOGGER.info(e.getMessage());
+                break;
+        }
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(e.getMessage());
+        alert.showAndWait();
     }
 }

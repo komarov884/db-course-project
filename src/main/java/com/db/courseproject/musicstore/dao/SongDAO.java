@@ -1,6 +1,7 @@
 package com.db.courseproject.musicstore.dao;
 
 import com.db.courseproject.musicstore.exception.DAOException;
+import com.db.courseproject.musicstore.exception.EntityNotFoundException;
 import com.db.courseproject.musicstore.model.Author;
 import com.db.courseproject.musicstore.model.AuthorType;
 import com.db.courseproject.musicstore.model.FullName;
@@ -8,7 +9,6 @@ import com.db.courseproject.musicstore.model.Song;
 import com.db.courseproject.musicstore.model.ExtendedSong;
 import com.db.courseproject.musicstore.util.DBConnection;
 import lombok.RequiredArgsConstructor;
-import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -44,8 +44,6 @@ import static com.db.courseproject.musicstore.util.DBConstants.AUTHORS_AUTHOR_TY
  */
 @RequiredArgsConstructor
 public class SongDAO implements DAO<Song> {
-    private static final Logger LOGGER = Logger.getLogger(SongDAO.class);
-
     @Override
     public Long create(Song entity) throws DAOException {
         ExtendedSong extendedSong = (ExtendedSong) entity;
@@ -100,8 +98,7 @@ public class SongDAO implements DAO<Song> {
                 if (resultSet.next()) {
                     return parseSong(resultSet, connection);
                 } else {
-                    LOGGER.info(String.format("Song with id = %d not found", id));
-                    return null;
+                    throw new EntityNotFoundException(String.format("Song with id = %d not found", id));
                 }
             } catch (SQLException e) {
                 throw new DAOException(e);

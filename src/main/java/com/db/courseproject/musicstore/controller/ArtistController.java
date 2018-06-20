@@ -1,7 +1,9 @@
 package com.db.courseproject.musicstore.controller;
 
 import com.db.courseproject.musicstore.dao.ArtistDAO;
+import com.db.courseproject.musicstore.exception.EntityNotFoundException;
 import com.db.courseproject.musicstore.exception.ForeignKeyViolationException;
+import com.db.courseproject.musicstore.exception.ServiceException;
 import com.db.courseproject.musicstore.model.Artist;
 import com.db.courseproject.musicstore.model.FullName;
 import com.db.courseproject.musicstore.service.ArtistService;
@@ -104,7 +106,14 @@ public class ArtistController implements Initializable {
             Artist artist = artistService.findById(id);
             this.artists.add(artist);
         } catch (NumberFormatException e) {
-            LOGGER.error(e.getMessage());
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error id parsing", "Parsing operation does not possible");
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error artist finding", "Operation does not possible");
+        } catch (EntityNotFoundException e) {
+            logExceptionAndShowAlert(Alert.AlertType.WARNING, e,
+                    "Artist not found", "Artist not found");
         }
     }
 
@@ -112,15 +121,25 @@ public class ArtistController implements Initializable {
     private void btFindByNameClick(ActionEvent actionEvent) {
         this.artists.clear();
         String name = tfFindByName.getText();
-        List<Artist> artists = artistService.findAllByName(name);
-        this.artists.addAll(artists);
+        try {
+            List<Artist> artists = artistService.findAllByName(name);
+            this.artists.addAll(artists);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error artist finding", "Operation does not possible");
+        }
     }
 
     @FXML
     private void btFindAllClick(ActionEvent actionEvent) {
         this.artists.clear();
-        List<Artist> artists = artistService.findAll();
-        this.artists.addAll(artists);
+        try {
+            List<Artist> artists = artistService.findAll();
+            this.artists.addAll(artists);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error artist finding", "Operation does not possible");
+        }
     }
 
     @FXML
@@ -142,14 +161,11 @@ public class ArtistController implements Initializable {
             Long id = Long.parseLong(tfDeleteById.getText());
             artistService.delete(id);
         } catch (NumberFormatException e) {
-            LOGGER.error(e.getMessage());
-        } catch (ForeignKeyViolationException e) {
-            LOGGER.error(e.getMessage());
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error artist deleting");
-            alert.setHeaderText("Operation does not possible");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error id parsing", "Parsing operation does not possible");
+        } catch (ServiceException | ForeignKeyViolationException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error artist deleting", "Operation does not possible");
         }
     }
 
@@ -174,20 +190,9 @@ public class ArtistController implements Initializable {
 
             ((Stage) ((Node) (actionEvent.getSource())).getScene().getWindow()).close();
         } catch (IOException e) {
-            LOGGER.error(String.format("Error loading fxml-file: %s", MAIN_FORM_FXML));
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error loading fxml-file", String.format("Error loading fxml-file: %s", MAIN_FORM_FXML));
         }
-    }
-
-    protected void createArtist(Artist artist) {
-        this.artists.clear();
-        Artist createdArtist = artistService.create(artist);
-        this.artists.add(createdArtist);
-    }
-
-    protected void updateArtist(Artist artist, Long id) {
-        this.artists.clear();
-        Artist updatedArtist = artistService.update(artist, id);
-        this.artists.add(updatedArtist);
     }
 
     private void showCreateUpdateWindow(String fxmlFileName, String title, boolean isCreationOperation) {
@@ -215,7 +220,30 @@ public class ArtistController implements Initializable {
             createUpdateArtistStage.initOwner(mainStage);
             createUpdateArtistStage.show();
         } catch (IOException e) {
-            LOGGER.error(String.format("Error loading fxml-file: %s", fxmlFileName));
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error loading fxml-file", String.format("Error loading fxml-file: %s", fxmlFileName));
+        }
+    }
+
+    protected void createArtist(Artist artist) {
+        this.artists.clear();
+        try {
+            Artist createdArtist = artistService.create(artist);
+            this.artists.add(createdArtist);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error artist creating", "Operation does not possible");
+        }
+    }
+
+    protected void updateArtist(Artist artist, Long id) {
+        this.artists.clear();
+        try {
+            Artist updatedArtist = artistService.update(artist, id);
+            this.artists.add(updatedArtist);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error artist updating", "Operation does not possible");
         }
     }
 
@@ -257,5 +285,24 @@ public class ArtistController implements Initializable {
             return new SimpleStringProperty(lastName);
         });
         clBirthDate.setCellValueFactory(new PropertyValueFactory<>(MEMBER_BIRTH_DATE));
+    }
+
+    private void logExceptionAndShowAlert(Alert.AlertType alertType, Exception e, String title, String headerText) {
+        switch (alertType) {
+            case ERROR:
+                LOGGER.error(e.getMessage());
+                break;
+            case WARNING:
+                LOGGER.warn(e.getMessage());
+                break;
+            default:
+                LOGGER.info(e.getMessage());
+                break;
+        }
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(e.getMessage());
+        alert.showAndWait();
     }
 }

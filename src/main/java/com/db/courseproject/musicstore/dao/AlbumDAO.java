@@ -1,6 +1,7 @@
 package com.db.courseproject.musicstore.dao;
 
 import com.db.courseproject.musicstore.exception.DAOException;
+import com.db.courseproject.musicstore.exception.EntityNotFoundException;
 import com.db.courseproject.musicstore.exception.ForeignKeyViolationException;
 import com.db.courseproject.musicstore.model.Album;
 import com.db.courseproject.musicstore.model.Artist;
@@ -12,7 +13,6 @@ import com.db.courseproject.musicstore.model.Author;
 import com.db.courseproject.musicstore.model.AuthorType;
 import com.db.courseproject.musicstore.util.DBConnection;
 import lombok.RequiredArgsConstructor;
-import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -71,8 +71,6 @@ import static com.db.courseproject.musicstore.util.DBConstants.PRODUCERS_BIRTH_D
  */
 @RequiredArgsConstructor
 public class AlbumDAO implements DAO<Album> {
-    private static final Logger LOGGER = Logger.getLogger(AlbumDAO.class);
-
     @Override
     public Long create(Album entity) throws DAOException {
         final String insertAlbumsSql =
@@ -144,8 +142,7 @@ public class AlbumDAO implements DAO<Album> {
                 if (resultSet.next()) {
                     return parseAlbum(resultSet, connection);
                 } else {
-                    LOGGER.info(String.format("Album with id = %d not found", id));
-                    return null;
+                    throw new EntityNotFoundException(String.format("Album with id = %d not found", id));
                 }
             } catch (SQLException e) {
                 throw new DAOException(e);
@@ -307,8 +304,7 @@ public class AlbumDAO implements DAO<Album> {
                 if (resultSet.next()) {
                     return parseArtist(resultSet);
                 } else {
-                    LOGGER.info(String.format("Artist with id = %d not found", artistId));
-                    return null;
+                    throw new DAOException(String.format("Artist with id = %d not found", artistId));
                 }
             } catch (SQLException e) {
                 throw new DAOException(e);
@@ -351,8 +347,7 @@ public class AlbumDAO implements DAO<Album> {
                 if (resultSet.next()) {
                     return parseRecordLabel(resultSet);
                 } else {
-                    LOGGER.info(String.format("Record label with id = %d not found", recordLabelId));
-                    return null;
+                    throw new DAOException(String.format("Record label with id = %d not found", recordLabelId));
                 }
             } catch (SQLException e) {
                 throw new DAOException(e);

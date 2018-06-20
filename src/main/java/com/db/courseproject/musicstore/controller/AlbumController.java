@@ -1,7 +1,9 @@
 package com.db.courseproject.musicstore.controller;
 
 import com.db.courseproject.musicstore.dao.AlbumDAO;
+import com.db.courseproject.musicstore.exception.EntityNotFoundException;
 import com.db.courseproject.musicstore.exception.ForeignKeyViolationException;
+import com.db.courseproject.musicstore.exception.ServiceException;
 import com.db.courseproject.musicstore.model.Album;
 import com.db.courseproject.musicstore.model.Artist;
 import com.db.courseproject.musicstore.model.Producer;
@@ -124,7 +126,14 @@ public class AlbumController implements Initializable {
             Album album = albumService.findById(id);
             this.albums.add(album);
         } catch (NumberFormatException e) {
-            LOGGER.error(e.getMessage());
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error id parsing", "Parsing operation does not possible");
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error album finding", "Operation does not possible");
+        } catch (EntityNotFoundException e) {
+            logExceptionAndShowAlert(Alert.AlertType.WARNING, e,
+                    "Album not found", "Album not found");
         }
     }
 
@@ -132,15 +141,25 @@ public class AlbumController implements Initializable {
     private void btFindByTitleClick(ActionEvent actionEvent) {
         this.albums.clear();
         String title = tfFindByTitle.getText();
-        List<Album> albums = albumService.findAllByTitle(title);
-        this.albums.addAll(albums);
+        try {
+            List<Album> albums = albumService.findAllByTitle(title);
+            this.albums.addAll(albums);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error album finding", "Operation does not possible");
+        }
     }
 
     @FXML
     private void btFindAllClick(ActionEvent actionEvent) {
         this.albums.clear();
-        List<Album> albums = albumService.findAll();
-        this.albums.addAll(albums);
+        try {
+            List<Album> albums = albumService.findAll();
+            this.albums.addAll(albums);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error album finding", "Operation does not possible");
+        }
     }
 
     @FXML
@@ -162,14 +181,11 @@ public class AlbumController implements Initializable {
             Long id = Long.parseLong(tfDeleteById.getText());
             albumService.delete(id);
         } catch (NumberFormatException e) {
-            LOGGER.error(e.getMessage());
-        } catch (ForeignKeyViolationException e) {
-            LOGGER.error(e.getMessage());
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error album deleting");
-            alert.setHeaderText("Operation does not possible");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error id parsing", "Parsing operation does not possible");
+        } catch (ServiceException | ForeignKeyViolationException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error album deleting", "Operation does not possible");
         }
     }
 
@@ -254,20 +270,61 @@ public class AlbumController implements Initializable {
 
             ((Stage) ((Node) (actionEvent.getSource())).getScene().getWindow()).close();
         } catch (IOException e) {
-            LOGGER.error(String.format("Error loading fxml-file: %s", MAIN_FORM_FXML));
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error loading fxml-file", String.format("Error loading fxml-file: %s", MAIN_FORM_FXML));
+        }
+    }
+
+    private void showCreateUpdateWindow(String fxmlFileName, String title, boolean isCreationOperation) {
+        Stage createUpdateAlbumStage = new Stage();
+        URL fxmlFile = ClassLoader.getSystemClassLoader().getResource(fxmlFileName);
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(fxmlFile);
+            Pane root = fxmlLoader.load();
+
+            CreateUpdateAlbumController controller = fxmlLoader.getController();
+            controller.setAlbumController(this);
+            controller.setTfIdDisable(isCreationOperation);
+
+            Scene scene = new Scene(root);
+
+            URL cssFile = ClassLoader.getSystemClassLoader().getResource(CSS_FILE);
+            scene.getStylesheets().add((cssFile).toExternalForm());
+
+            Stage mainStage = (Stage) btCreate.getScene().getWindow();
+
+            createUpdateAlbumStage.setTitle(title);
+            createUpdateAlbumStage.setResizable(false);
+            createUpdateAlbumStage.setScene(scene);
+            createUpdateAlbumStage.initModality(Modality.WINDOW_MODAL);
+            createUpdateAlbumStage.initOwner(mainStage);
+            createUpdateAlbumStage.show();
+        } catch (IOException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error loading fxml-file", String.format("Error loading fxml-file: %s", fxmlFileName));
         }
     }
 
     protected void createAlbum(Album album) {
         this.albums.clear();
-        Album createdAlbum = albumService.create(album);
-        this.albums.add(createdAlbum);
+        try {
+            Album createdAlbum = albumService.create(album);
+            this.albums.add(createdAlbum);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error album creating", "Operation does not possible");
+        }
     }
 
     protected void updateAlbum(Album album, Long id) {
         this.albums.clear();
-        Album updatedAlbum = albumService.update(album, id);
-        this.albums.add(updatedAlbum);
+        try {
+            Album updatedAlbum = albumService.update(album, id);
+            this.albums.add(updatedAlbum);
+        } catch (ServiceException e) {
+            logExceptionAndShowAlert(Alert.AlertType.ERROR, e,
+                    "Error album updating", "Operation does not possible");
+        }
     }
 
     private void addListenersOnTextFields() {
@@ -311,35 +368,6 @@ public class AlbumController implements Initializable {
             }
             return new SimpleObjectProperty<>(recordLabelId);
         });
-    }
-
-    private void showCreateUpdateWindow(String fxmlFileName, String title, boolean isCreationOperation) {
-        Stage createUpdateAlbumStage = new Stage();
-        URL fxmlFile = ClassLoader.getSystemClassLoader().getResource(fxmlFileName);
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(fxmlFile);
-            Pane root = fxmlLoader.load();
-
-            CreateUpdateAlbumController controller = fxmlLoader.getController();
-            controller.setAlbumController(this);
-            controller.setTfIdDisable(isCreationOperation);
-
-            Scene scene = new Scene(root);
-
-            URL cssFile = ClassLoader.getSystemClassLoader().getResource(CSS_FILE);
-            scene.getStylesheets().add((cssFile).toExternalForm());
-
-            Stage mainStage = (Stage) btCreate.getScene().getWindow();
-
-            createUpdateAlbumStage.setTitle(title);
-            createUpdateAlbumStage.setResizable(false);
-            createUpdateAlbumStage.setScene(scene);
-            createUpdateAlbumStage.initModality(Modality.WINDOW_MODAL);
-            createUpdateAlbumStage.initOwner(mainStage);
-            createUpdateAlbumStage.show();
-        } catch (IOException e) {
-            LOGGER.error(String.format("Error loading fxml-file: %s", fxmlFileName));
-        }
     }
 
     private void showInfoDialog(String title, String header, String context) {
@@ -399,5 +427,24 @@ public class AlbumController implements Initializable {
             builder.append("\n");
         }
         return builder.toString();
+    }
+
+    private void logExceptionAndShowAlert(Alert.AlertType alertType, Exception e, String title, String headerText) {
+        switch (alertType) {
+            case ERROR:
+                LOGGER.error(e.getMessage());
+                break;
+            case WARNING:
+                LOGGER.warn(e.getMessage());
+                break;
+            default:
+                LOGGER.info(e.getMessage());
+                break;
+        }
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(e.getMessage());
+        alert.showAndWait();
     }
 }

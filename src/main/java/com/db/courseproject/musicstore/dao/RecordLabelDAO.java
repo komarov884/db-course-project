@@ -1,10 +1,10 @@
 package com.db.courseproject.musicstore.dao;
 
 import com.db.courseproject.musicstore.exception.DAOException;
+import com.db.courseproject.musicstore.exception.EntityNotFoundException;
 import com.db.courseproject.musicstore.exception.ForeignKeyViolationException;
 import com.db.courseproject.musicstore.model.RecordLabel;
 import com.db.courseproject.musicstore.util.DBConnection;
-import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,8 +32,6 @@ import static com.db.courseproject.musicstore.util.DBConstants.ALBUMS_RECORD_LAB
  * @author Vasilii Komarov
  */
 public class RecordLabelDAO implements DAO<RecordLabel> {
-    private static final Logger LOGGER = Logger.getLogger(RecordLabelDAO.class);
-
     @Override
     public Long create(RecordLabel entity) throws DAOException {
         final String insertRecordLabelsSql =
@@ -81,8 +79,7 @@ public class RecordLabelDAO implements DAO<RecordLabel> {
                 if (resultSet.next()) {
                     return parseRecordLabel(resultSet);
                 } else {
-                    LOGGER.info(String.format("Record label with id = %d not found", id));
-                    return null;
+                    throw new EntityNotFoundException(String.format("Record label with id = %d not found", id));
                 }
             } catch (SQLException e) {
                 throw new DAOException(e);
